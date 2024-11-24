@@ -1,5 +1,6 @@
 import axios from 'axios'
 const api_url = process.env.API_URL
+// axios.defaults.adapter = require('axios/lib/adapters/http');
 
 const api = {
     async get(url, headers = {}) {
@@ -17,10 +18,11 @@ const api = {
     async post(url, data = {}, headers = {}) {
         try {
             console.log(api_url + url)
-            const response = await axios.post(api_url + url, data, { headers: headers, timeout: 15000 })
+            const response = await axios.post(api_url + url, data, { headers: headers })
             // await console.log(await response?.data)
             return response
         } catch (e) {
+            console.error(e);
             // console.log(e.response)
             // console.log(e.request)
             // console.log(e.message)

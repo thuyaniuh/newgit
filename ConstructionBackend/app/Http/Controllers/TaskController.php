@@ -18,6 +18,14 @@ class TaskController extends Controller
         return response()->json($tasks, 200);
     }
 
+    public function index1($id)
+    {
+        //
+        $tasks = Task::where("project_id", $id)->with(['project', 'user'])->get();
+        return response()->json($tasks, 200);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */

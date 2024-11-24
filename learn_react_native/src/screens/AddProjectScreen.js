@@ -8,15 +8,15 @@ import { add_projects } from "../stores/actions/projectAction";
 import { convertNumberToVietnameseText } from "../utils/numberToText"; // Hàm chuyển đổi số thành chữ tiếng Việt
 
 function AddProjectScreen({ navigation }) {
-    const [name, setName] = useState("");
-    const [budget, setBudget] = useState("");
-    const [type, setType] = useState("");
-    const [description, setDescription] = useState("");
-    const [startDay, setStartDay] = useState(new Date());
+    const [name, setName] = useState("Tên dự án a");
+    const [budget, setBudget] = useState(20000);
+    const [type, setType] = useState("Xây dựng");
+    const [description, setDescription] = useState("Mô tả dự án ...");
+    const [startDay, setStartDay] = useState(new Date('2024-10-10'));
     const [endDay, setEndDay] = useState(new Date());
     const [showStartPicker, setShowStartPicker] = useState(false);
     const [showEndPicker, setShowEndPicker] = useState(false);
-    const [status, setStatus] = useState("");
+    const [status, setStatus] = useState("active");
     const [statusOpen, setStatusOpen] = useState(false);
     const [typeOpen, setTypeOpen] = useState(false);
 

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Project;
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
+use App\Models\Project;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -19,6 +20,7 @@ class ProjectController extends Controller
 
     public function index(Request $request)
     {
+        Log::info("index");
         // Lấy từ khóa tìm kiếm từ query string
         $search = $request->input('query', '');
 
@@ -42,6 +44,7 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         //
+        Log::info("store");
         try {
             $validated = $request->validate([
                 'budget' => 'required',
@@ -53,15 +56,17 @@ class ProjectController extends Controller
                 'status' => 'required|in:active,completed',
             ]);
 
+            Log::info(request()->all());
+
             if (Carbon::parse($request->start_day)->greaterThanOrEqualTo(Carbon::parse($request->end_day))) {
-                return response()->json("start date không được nhỏ hơn end date", 200);
+                return response()->json(["data" => "start date không được nhỏ hơn end date"], 500);
             }
 
             $project = Project::create($validated);
 
             return response()->json($project, 201);
         } catch (Exception $e) {
-            return response()->json($e->getMessage(), 200);
+            return response()->json($e->getMessage(), 500);
         }
     }
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\TaskController;
 // Route đăng nhập và đăng ký không yêu cầu xác thực
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/user-profile', [AuthController::class, 'userProfile']);
 
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 
@@ -47,6 +48,8 @@ Route::put('purchases/update/{id}', [PurchaseController::class, 'update']);
 Route::delete('/purchases/{id}', [PurchaseController::class, 'destroy']);
 
 Route::get('tasks', [TaskController::class, 'index']);
+Route::get('tasks/projects/{id}', [TaskController::class, 'index1']);
+// Route::get('tasks/projects/{id}', [TaskController::class, 'index1']);
 Route::post('/tasks/store', [TaskController::class, 'store']);
 Route::get('/tasks/{id}', [TaskController::class, 'show']);
 Route::put('tasks/update/{id}', [TaskController::class, 'update']);
