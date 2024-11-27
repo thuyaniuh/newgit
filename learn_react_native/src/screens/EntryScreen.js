@@ -16,7 +16,7 @@ import {
     Paragraph,
 } from "react-native-paper";
 
-function TaskListScreen({ route, navigation }) {
+function EntryScreen({ route, navigation }) {
     const { projectId } = route.params;
     const project = route.params.item;
     const dispatch = useDispatch();
@@ -93,7 +93,7 @@ function TaskListScreen({ route, navigation }) {
                 onPress={() => navigation.navigate("AddTask", { projectId: projectId, project: project, navigation: navigation })}
                 style={styles.addButton}
             >
-                Add Task
+                Add timekeeping
             </Button>
             <FlatList
                 data={tasks}
@@ -128,4 +128,4 @@ const styles = StyleSheet.create({
     modalContent: { padding: 20, backgroundColor: "white" },
 });
 
-export default TaskListScreen;
+export default EntryScreen;

@@ -69,8 +69,11 @@ function AddProjectScreen({ navigation }) {
         // return
 
         try {
-            await dispatch(add_projects(formData));
-            navigation.goBack();
+            if(dispatch(add_projects(formData))) {
+                navigation.goBack();
+            }else {
+                Alert.alert("Error", "Vui lòng kiểm tra lại thông tin nhập");
+            }
         } catch (error) {
             Alert.alert("Error", "Failed to add project");
         }

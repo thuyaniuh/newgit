@@ -7,6 +7,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\TaskController;
 // Route đăng nhập và đăng ký không yêu cầu xác thực
@@ -24,10 +25,14 @@ Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 
 Route::get('/projects', [ProjectController::class, 'index']);
+Route::get('/projects_all', [ProjectController::class, 'all']);
 Route::post('/projects/store', [ProjectController::class, 'store']);
 Route::get('/projects/{id}', [ProjectController::class, 'show']);
 Route::put('/projects/update/{id}', [ProjectController::class, 'update']);
 Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
+
+Route::get('/entry_by_user', [EntryController::class, 'getByUser']);
+
 
 Route::get('/materials', [MaterialController::class, 'index']);
 Route::post('/materials/store', [MaterialController::class, 'store']);

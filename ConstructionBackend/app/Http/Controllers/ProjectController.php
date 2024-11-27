@@ -20,7 +20,6 @@ class ProjectController extends Controller
 
     public function index(Request $request)
     {
-        Log::info("index");
         // Lấy từ khóa tìm kiếm từ query string
         $search = $request->input('query', '');
 
@@ -34,6 +33,13 @@ class ProjectController extends Controller
         })
             ->latest()
             ->paginate($perPage);
+
+        return response()->json($projects, 200);
+    }
+
+    public function all(Request $request)
+    {
+        $projects = Project::all();
 
         return response()->json($projects, 200);
     }

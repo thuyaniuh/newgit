@@ -108,13 +108,6 @@ function ProjectManagementScreen({ props, navigation }) {
                 Tìm kiếm
             </Button>
 
-            <Button
-                mode="contained"
-                style={styles.addButton}
-                onPress={() => navigation.navigate("AddProjectScreen")}
-            >
-                Thêm Dự Án
-            </Button>
 
             <FlatList
                 data={projects}
@@ -125,6 +118,13 @@ function ProjectManagementScreen({ props, navigation }) {
 
             {renderPagination()}
 
+            <Button
+                mode="contained"
+                style={styles.addButton}
+                onPress={() => navigation.navigate("AddProjectScreen")}
+            >
+                Thêm Dự Án
+            </Button>
             
         </View>
     );

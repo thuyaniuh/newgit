@@ -6,30 +6,36 @@ export const ADD_PROJECT = "ADD_PROJECT";
 export const EDIT_PROJECT = "EDIT_PROJECT";
 export const DELETE_PROJECT = "DELETE_PROJECT";
 
-export const fetch_projects = (page = 1, search = "") => async (dispatch) => {
-    try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await api.get(`api/projects?page=${page}&search=${search}`, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        dispatch({
-            type: FETCH_PROJECT,
-            payload: response.data, // Cấu trúc payload này sẽ cần điều chỉnh để khớp với reducer
-        });
-    } catch (error) {
-        console.log("Lỗi khi lấy dữ liệu dự án:", error);
-    }
-};
+export const fetch_projects =
+    (page = 1, search = "") =>
+    async (dispatch) => {
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const response = await api.get(
+                `api/projects?page=${page}&search=${search}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            dispatch({
+                type: FETCH_PROJECT,
+                payload: response.data, // Cấu trúc payload này sẽ cần điều chỉnh để khớp với reducer
+            });
+        } catch (error) {
+            console.log("Lỗi khi lấy dữ liệu dự án:", error);
+        }
+    };
 
 export const add_projects = (data) => async (dispatch) => {
     try {
         const token = await AsyncStorage.getItem("token");
         const response = await api.post("api/projects/store", data, {
             headers: {
-                "Content-Type": "application/json",
+                // "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`,
             },
         });
@@ -37,8 +43,10 @@ export const add_projects = (data) => async (dispatch) => {
             type: ADD_PROJECT,
             payload: response.data,
         });
+        return true
     } catch (error) {
         console.log("Lỗi khi thêm dự án:", error);
+        return false
     }
 };
 

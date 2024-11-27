@@ -31,6 +31,7 @@ import AddSupplier from "./src/screens/AddSupplier";
 import EditUserScreen from "./src/screens/EditUserScreen";
 import PurchaseListScreen from "./src/screens/PurchaseListScreen";
 import PurchaseDetailScreen from "./src/screens/PurchaseDetailScreen";
+import EntryScreen from "./src/screens/EntryScreen";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -221,6 +222,15 @@ function AppStack() {
                 component={PurchaseDetailScreen}
                 options={{
                     title: "Purchase Detail",
+                    headerStyle: { backgroundColor: theme.colors.primary },
+                    headerTintColor: "#333",
+                }}
+            />
+            <Stack.Screen
+                name="EntryScreen"
+                component={EntryScreen}
+                options={{
+                    title: "Timekeeping",
                     headerStyle: { backgroundColor: theme.colors.primary },
                     headerTintColor: "#333",
                 }}

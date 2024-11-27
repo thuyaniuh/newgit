@@ -1,39 +1,52 @@
-import axios from 'axios'
-const api_url = process.env.API_URL
+import axios from "axios";
+const api_url = process.env.API_URL;
 // axios.defaults.adapter = require('axios/lib/adapters/http');
 
 const api = {
     async get(url, headers = {}) {
         try {
-            const data = await axios.get(api_url + url, { headers: headers })
-            console.log(api_url + url)
+            const axiosInstance = axios.create({
+                baseURL: api_url,
+                timeout: 60000, // 60 giây
+            });
+            const data = await axiosInstance.get(url, { headers: headers });
+            console.log(api_url + url);
             // console.log(data)
 
-            return await data
+            return await data;
         } catch (e) {
-            throw e
+            throw e;
         }
     },
 
     async post(url, data = {}, headers = {}) {
         try {
-            console.log(api_url + url)
-            const response = await axios.post(api_url + url, data, { headers: headers })
+            console.log(api_url + url);
+            const axiosInstance = axios.create({
+                baseURL: api_url,
+                timeout: 60000, // 60 giây
+            });
+            const response = await axiosInstance.post(url, data, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            // const response = await axios.post(api_url + url, data, { headers: headers , timeout: 30000,})
             // await console.log(await response?.data)
-            return response
+            return response;
         } catch (e) {
             console.error(e);
             // console.log(e.response)
             // console.log(e.request)
             // console.log(e.message)
             // console.log( e.config)
-            throw e
+            throw e;
         }
     },
 
     async put(url, data = {}, headers = {}) {
         try {
-            let result = await axios.put(api_url + url, data, { headers: headers });
+            let result = await axios.put(api_url + url, data, {
+                headers: headers,
+            });
             return result;
         } catch (e) {
             throw e;
@@ -41,14 +54,14 @@ const api = {
     },
     async delete(url, data = {}, headers = {}) {
         try {
-            console.log(api_url + url)
-            let result = await axios.delete(api_url + url, data, headers)
+            console.log(api_url + url);
+            let result = await axios.delete(api_url + url, data, headers);
 
-            return result
+            return result;
         } catch (e) {
-            throw e
+            throw e;
         }
-    }
-}
+    },
+};
 
-export default api
+export default api;

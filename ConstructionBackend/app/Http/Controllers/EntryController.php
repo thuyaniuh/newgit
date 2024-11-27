@@ -18,6 +18,13 @@ class EntryController extends Controller
         return response()->json($entries, 200);
     }
 
+    public function getByUser(Request $request, $id)
+    {
+        //
+        $entries = Entry::where('user_id', $id)->get();
+        return response()->json($entries, 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

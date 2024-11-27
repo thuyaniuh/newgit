@@ -37,6 +37,11 @@ export default function UserManagementScreen({ navigation }) {
                     <>
                         <IconButton
                             {...props}
+                            icon="calendar"
+                            onPress={() => navigation.navigate("EntryScreen", { user: item })}
+                        />
+                        <IconButton
+                            {...props}
                             icon="pencil"
                             onPress={() => navigation.navigate("EditUser", { user: item })}
                         />
