@@ -98,6 +98,9 @@ export function DrawerContent(props) {
                         <Drawer.Item
                             label="Purchase Management"
                             onPress={() => props.navigation.navigate("PurchaseScreen")} />
+                        <Drawer.Item
+                            label="Revenue Expenditure"
+                            onPress={() => props.navigation.navigate("RevenueExpenditureScreen")} />
                     </>
                 )}
                 {user && (

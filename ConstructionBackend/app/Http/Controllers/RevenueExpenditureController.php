@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RevenueExpenditure;
+use Exception;
 use Illuminate\Http\Request;
+use App\Models\RevenueExpenditure;
+use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Contracts\Providers\Auth;
 
 class RevenueExpenditureController extends Controller
 {
@@ -12,15 +15,14 @@ class RevenueExpenditureController extends Controller
      */
     public function index()
     {
-        //
-    }
+        try {
+            $data = RevenueExpenditure::get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+            return response()->json($data, 200);
+        } catch (Exception $e) {
+            Log::info($e);
+            return response()->json($e, 500);
+        }
     }
 
     /**
@@ -28,7 +30,27 @@ class RevenueExpenditureController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $avatarPath = null;
+            if ($request->hasFile('images')) {
+                $avatarPath = $request->file('images')->store('images', 'public');
+            }
+            $data = [
+                'user_id' => $request->user_id,
+                'type_re' => $request->type_re,
+                'note' => $request->note,
+                'money' => $request->money,
+            ];
+            if (!empty($avatarPath)) {
+                $data['images'] = $avatarPath;
+            }
+            $data = RevenueExpenditure::create($data);
+
+            return response()->json($data, 201);
+        } catch (Exception $e) {
+            Log::info($e);
+            return response()->json($e, 500);
+        }
     }
 
     /**

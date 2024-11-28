@@ -9,16 +9,19 @@ class RevenueExpenditure extends Model
 {
     use HasFactory;
 
+    protected $table = "revenue_expenditure";
+
     protected $fillable = [
         'id',
         'user_id', // người tạo
         'type_re', // loại thu hay chi
         'note', // ghi chú
-        'money', // ghi chú
+        'money', // số tiền
+        'images', // ảnh chứng từ
     ];
 
-    public function purchase()
+    public function user()
     {
-        return $this->belongsTo(Purchase::class, 'purchase_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

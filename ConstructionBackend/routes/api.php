@@ -9,6 +9,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\RevenueExpenditureController;
 use App\Http\Controllers\TaskController;
 // Route đăng nhập và đăng ký không yêu cầu xác thực
 Route::post('/login', [AuthController::class, 'login']);
@@ -24,6 +25,7 @@ Route::put('/users/update/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 
+// quản lý dự án
 Route::get('/projects', [ProjectController::class, 'index']);
 Route::get('/projects_all', [ProjectController::class, 'all']);
 Route::post('/projects/store', [ProjectController::class, 'store']);
@@ -32,6 +34,13 @@ Route::put('/projects/update/{id}', [ProjectController::class, 'update']);
 Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
 
 Route::get('/entry_by_user', [EntryController::class, 'getByUser']);
+
+// phiếu thu chi
+Route::get('/revenue_expenditure', [RevenueExpenditureController::class, 'index']);
+Route::post('/revenue_expenditure/store', [RevenueExpenditureController::class, 'store']);
+Route::get('/revenue_expenditure/{id}', [RevenueExpenditureController::class, 'show']);
+Route::put('/revenue_expenditure/update/{id}', [RevenueExpenditureController::class, 'update']);
+Route::delete('/revenue_expenditure/{id}', [RevenueExpenditureController::class, 'destroy']);
 
 
 Route::get('/materials', [MaterialController::class, 'index']);

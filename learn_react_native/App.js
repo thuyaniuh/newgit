@@ -32,6 +32,7 @@ import EditUserScreen from "./src/screens/EditUserScreen";
 import PurchaseListScreen from "./src/screens/PurchaseListScreen";
 import PurchaseDetailScreen from "./src/screens/PurchaseDetailScreen";
 import EntryScreen from "./src/screens/EntryScreen";
+import RevenueExpenditureScreen from "./src/screens/RevenueExpenditureScreen";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -231,6 +232,15 @@ function AppStack() {
                 component={EntryScreen}
                 options={{
                     title: "Timekeeping",
+                    headerStyle: { backgroundColor: theme.colors.primary },
+                    headerTintColor: "#333",
+                }}
+            />
+            <Stack.Screen
+                name="RevenueExpenditureScreen"
+                component={RevenueExpenditureScreen}
+                options={{
+                    title: "Revenue Expenditure",
                     headerStyle: { backgroundColor: theme.colors.primary },
                     headerTintColor: "#333",
                 }}

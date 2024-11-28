@@ -9,11 +9,11 @@ const api = {
                 baseURL: api_url,
                 timeout: 60000, // 60 giây
             });
-            const data = await axiosInstance.get(url, { headers: headers });
             console.log(api_url + url);
+            const data = await axiosInstance.get(url, { headers: headers });
             // console.log(data)
 
-            return await data;
+            return data;
         } catch (e) {
             throw e;
         }
