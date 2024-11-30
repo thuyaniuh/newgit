@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, StyleSheet, Alert } from "react-native";
+import { View, FlatList, StyleSheet, Alert , Text} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers, deleteUser } from "../stores/actions/userActions";
 import { Button, TextInput, Card, Paragraph, Title, Avatar, IconButton } from "react-native-paper";
@@ -38,7 +38,7 @@ export default function UserManagementScreen({ navigation }) {
                         <IconButton
                             {...props}
                             icon="calendar"
-                            onPress={() => navigation.navigate("EntryScreen", { user: item })}
+                            onPress={() => navigation.navigate("EntryScreen", { users: item })}
                         />
                         <IconButton
                             {...props}
@@ -54,8 +54,32 @@ export default function UserManagementScreen({ navigation }) {
                     </>
                 )}
             />
+
+            <View style={styles.infoContainer1}>
+                <Title style={styles.projectName}>Dự án đang làm</Title>
+
+                <Paragraph style={styles.projectInfo}>
+                    {/* Người tạo phiếu: {item?.user?.name} */}
+                    <FlatList
+                        data={item?.projects}
+                        renderItem={renderProject}
+                        keyExtractor={(item) => getRandomInt(1,10000)}
+                        style={styles.list}
+                    />
+                </Paragraph>
+            </View>
         </Card>
     );
+
+    const getRandomInt = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    const renderProject = ({ item }) => (
+        <View style={styles.infoContainer}>
+            <Text>{item?.name}</Text>
+        </View>
+    )
 
     return (
         <View style={styles.container}>
@@ -130,4 +154,23 @@ const styles = StyleSheet.create({
     addButton: {
         marginTop: 20,
     },
+    actionContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    projectName: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 20
+    },
+    projectInfo: {
+        fontSize: 14,
+    },
+    infoContainer1: {
+        paddingLeft: 10,
+        marginLeft: 10,
+        marginBottom:20
+    }
 });

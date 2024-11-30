@@ -50,7 +50,7 @@ export const addUser = (userData) => async (dispatch) => {
 export const editUser = (id, userData) => async (dispatch) => {
     try {
         const token = await AsyncStorage.getItem("token");
-        const response = await api.put(`api/users/${id}`, userData, {
+        const response = await api.post(`api/users/update/${id}`, userData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`,

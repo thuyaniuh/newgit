@@ -9,9 +9,10 @@ const initialState = {
 const revenueExpenditureReducer = (state = initialState, action) => {
     switch (action.type) {
         case FETCH_RE:
+            // console.log(action.payload)
             return {
                 ...state,
-                revenue_expenditure: action.payload.data,
+                revenue_expenditure: action.payload,
                 totalPages: action.payload.last_page,
                 currentPage: action.payload.current_page,
             };

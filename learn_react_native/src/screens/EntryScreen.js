@@ -17,7 +17,7 @@ import {
 } from "react-native-paper";
 
 function EntryScreen({ route, navigation }) {
-    const { projectId } = route.params;
+    const { users } = route.params;
     const project = route.params.item;
     const dispatch = useDispatch();
     const { tasks } = useSelector((state) => state.tasks);
@@ -25,9 +25,9 @@ function EntryScreen({ route, navigation }) {
     const [currentTask, setCurrentTask] = useState({});
     const [isEditing, setIsEditing] = useState(false);
     // console.log(projectId);
-    useEffect(() => {
-        dispatch(fetchTasks(projectId));
-    }, [dispatch, projectId]);
+    // useEffect(() => {
+    //     dispatch(fetchTasks(users));
+    // }, [dispatch, users]);
 
     const handleAddTask = () => {
         setIsEditing(false);
@@ -61,27 +61,7 @@ function EntryScreen({ route, navigation }) {
         <Card style={styles.card}>
             <Card.Content>
                 <Title>{item.name}</Title>
-                <Paragraph>Project: {item.project.name}</Paragraph>
-                <Paragraph>User: {item.user?.name}</Paragraph>
-                <Paragraph>User: {item.user?.email}</Paragraph>
-                <Paragraph>Start date: {item?.start_day}</Paragraph>
-                <Paragraph>End date: {item?.end_day}</Paragraph>
-                <Card.Actions style={styles.cardActions}>
-                    <Button
-                        mode="contained"
-                        theme={{ colors: { primary: "#0d6efd" } }}
-                        onPress={() => handleEditTask(item)}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        mode="contained"
-                        theme={{ colors: { primary: "#dc3545" } }}
-                        onPress={() => handleDeleteTask(item.task_id)}
-                    >
-                        Delete
-                    </Button>
-                </Card.Actions>
+                <Paragraph>Project: {item.name}</Paragraph>
             </Card.Content>
         </Card>
     );
@@ -90,7 +70,7 @@ function EntryScreen({ route, navigation }) {
         <View style={styles.container}>
             <Button
                 mode="contained"
-                onPress={() => navigation.navigate("AddTask", { projectId: projectId, project: project, navigation: navigation })}
+                onPress={() => navigation.navigate("AddEntry", { user: users, navigation: navigation })}
                 style={styles.addButton}
             >
                 Add timekeeping

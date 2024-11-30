@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, FlatList, StyleSheet, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRE, deleteUser } from "../stores/actions/reAction";
+import { fetchRE, deleteRE } from "../stores/actions/reAction";
 import {
     Button,
     TextInput,
@@ -11,6 +11,7 @@ import {
     Avatar,
     IconButton,
 } from "react-native-paper";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function RevenueExpenditureScreen({ navigation }) {
     const [search, setSearch] = useState("");
@@ -18,49 +19,61 @@ export default function RevenueExpenditureScreen({ navigation }) {
     const { revenue_expenditure, totalPages, currentPage } = useSelector(
         (state) => state.revenue_expenditure
     );
-
+    const [startDay, setStartDay] = useState(new Date());
+    const [showStartPicker, setShowStartPicker] = useState(false);
     useEffect(() => {
         dispatch(fetchRE(currentPage, search));
     }, [dispatch, currentPage, search]);
 
+    useEffect(() => {
+        dispatch(fetchRE(currentPage, startDay.toISOString().split("T")[0]));
+    }, [startDay]);
+
     const handleDelete = (id) => {
         Alert.alert(
-            "Xóa người dùng",
-            "Bạn có chắc chắn muốn phiếu thu chi này không?",
+            "Xóa phiếu đã chọn này",
+            "Bạn có chắc chắn muốn xóa phiếu thu chi này không?",
             [
                 { text: "Hủy", style: "cancel" },
-                { text: "Xóa", onPress: () => dispatch(deleteUser(id)) },
+                { text: "Xóa", onPress: () => callDelete(id) },
             ]
         );
     };
+
+    async function callDelete(id) {
+        await dispatch(deleteRE(id));
+        await dispatch(fetchRE(currentPage, startDay.toISOString().split("T")[0]))
+    }
 
     const renderData = ({ item }) => (
         <Card style={styles.card}>
             <View style={styles.cardContent}>
                 <View style={styles.infoContainer}>
                     <Title style={styles.projectName}>{item.name}</Title>
+
                     <Paragraph style={styles.projectInfo}>
-                        Loại dự án: {item.type}
+                        Người tạo phiếu: {item?.user?.name}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
-                        Ngày bắt đầu: {item.start_day}
+                        Số tiền: {item.money}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
-                        Ngày kết thúc: {item.end_day}
+                        Trạng thái:{" "}
+                        {item.type_re == 0 ? "Phiếu thu" : "Phiếu chi"}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
-                        Ngân sách: {item.budget}
+                        Ngày tạo: {item.created_at}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
-                        Trạng thái: {item.status}
+                        Mô tả: {item.note}
                     </Paragraph>
                 </View>
                 <View style={styles.actionContainer}>
-                    <IconButton icon="pencil" style={styles.iconButton} />
+                    {/* <IconButton icon="pencil" style={styles.iconButton} /> */}
                     <IconButton
                         icon="delete"
                         color="red"
-                        onPress={() => handleDelete(item.project_id)}
+                        onPress={() => handleDelete(item.id)}
                         style={styles.iconButton}
                     />
                 </View>
@@ -68,16 +81,34 @@ export default function RevenueExpenditureScreen({ navigation }) {
         </Card>
     );
 
+    const handleDateChange = (event, selectedDate, type) => {
+        const currentDate = selectedDate || (type === "start" ? startDay : endDay);
+        if (type === "start") {
+            setShowStartPicker(false);
+            setStartDay(currentDate);
+        } else {
+            setShowEndPicker(false);
+            setEndDay(currentDate);
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <TextInput
-                label="Tìm kiếm người dùng"
-                value={search}
-                onChangeText={setSearch}
-                style={styles.searchInput}
+            <Button
                 mode="outlined"
-                onSubmitEditing={() => dispatch(fetchRE(1, search))}
-            />
+                onPress={() => setShowStartPicker(true)}
+                style={styles.dateButton}
+            >
+                Select Start Date: {startDay.toISOString().split("T")[0]}
+            </Button>
+            {showStartPicker && (
+                <DateTimePicker
+                    value={startDay}
+                    mode="date"
+                    display="default"
+                    onChange={(e, date) => handleDateChange(e, date, "start")}
+                />
+            )}
             <Button
                 mode="contained"
                 onPress={() => dispatch(fetchRE(1, search))}
@@ -109,7 +140,9 @@ export default function RevenueExpenditureScreen({ navigation }) {
             <Button
                 mode="contained"
                 style={styles.addButton}
-                onPress={() => navigation.navigate("AddUser")}
+                onPress={() =>
+                    navigation.navigate("AddRevenueExpenditureScreen")
+                }
             >
                 Thêm Phiếu Thu Chi mới
             </Button>
@@ -128,21 +161,60 @@ const styles = StyleSheet.create({
     },
     searchButton: {
         marginBottom: 20,
+        marginTop: 20,
     },
     card: {
         marginBottom: 15,
         borderRadius: 10,
         elevation: 3,
     },
+    cardContent: {
+        padding: 10,
+    },
+    infoContainer: {
+        flex: 1,
+    },
+    actionContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    projectName: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    projectInfo: {
+        fontSize: 14,
+    },
+    iconButton: {
+        marginHorizontal: 5,
+    },
     list: {
         flex: 1,
     },
-    pagination: {
+    paginationContainer: {
         flexDirection: "row",
         justifyContent: "center",
-        marginVertical: 20,
+        marginVertical: 10,
+    },
+    pageButton: {
+        padding: 10,
+        borderRadius: 20,
+        marginHorizontal: 5,
+        backgroundColor: "#ddd",
+    },
+    pageButtonActive: {
+        backgroundColor: "#f1c40f",
+    },
+    pageButtonText: {
+        fontSize: 16,
     },
     addButton: {
-        marginTop: 20,
+        marginTop: 10,
+        backgroundColor: "#007bff",
+    },
+    taskButton: {
+        marginRight: 10,
     },
 });

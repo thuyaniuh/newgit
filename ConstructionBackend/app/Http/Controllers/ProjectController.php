@@ -62,6 +62,8 @@ class ProjectController extends Controller
                 'status' => 'required|in:active,completed',
             ]);
 
+
+
             Log::info(request()->all());
 
             if (Carbon::parse($request->start_day)->greaterThanOrEqualTo(Carbon::parse($request->end_day))) {

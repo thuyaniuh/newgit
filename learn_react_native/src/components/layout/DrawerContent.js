@@ -8,10 +8,10 @@ import {
     Caption,
     Text,
     Button,
+    List,
 } from "react-native-paper";
 import { checkToken, logout } from "../../stores/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function DrawerContent(props) {
     const dispatch = useDispatch();
@@ -22,7 +22,6 @@ export function DrawerContent(props) {
     }, [dispatch]);
 
     const handleLogout = () => {
-        // console.log("logout");
         dispatch(logout());
         props.navigation.navigate("Login");
     };
@@ -70,7 +69,11 @@ export function DrawerContent(props) {
                     onPress={() => props.navigation.navigate("todo")}
                 />
                 {user && (
-                    <>
+                    <List.Accordion
+                    style={{ marginLeft: 12 }}
+                        title="Management"
+                        // left={(props) => <List.Icon {...props} icon="folder" />}
+                    >
                         <Drawer.Item
                             label="User Management"
                             onPress={() =>
@@ -97,16 +100,27 @@ export function DrawerContent(props) {
                         />
                         <Drawer.Item
                             label="Purchase Management"
-                            onPress={() => props.navigation.navigate("PurchaseScreen")} />
+                            onPress={() =>
+                                props.navigation.navigate("PurchaseScreen")
+                            }
+                        />
                         <Drawer.Item
                             label="Revenue Expenditure"
-                            onPress={() => props.navigation.navigate("RevenueExpenditureScreen")} />
-                    </>
+                            onPress={() =>
+                                props.navigation.navigate(
+                                    "RevenueExpenditureScreen"
+                                )
+                            }
+                        />
+                    </List.Accordion>
                 )}
                 {user && (
-                    <Drawer.Section>
-                        <Drawer.Item label="Logout" onPress={() => handleLogout()} />
-                    </Drawer.Section>
+                    // <Drawer.Section>
+                        <Drawer.Item
+                            label="Logout"
+                            onPress={() => handleLogout()}
+                        />
+                    // </Drawer.Section>
                 )}
             </Drawer.Section>
         </DrawerContentScrollView>

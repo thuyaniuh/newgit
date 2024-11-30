@@ -53,6 +53,11 @@ class User extends Authenticatable implements JWTSubject
 
     protected $primaryKey = 'user_id';
 
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_users', 'user_id', 'project_id');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

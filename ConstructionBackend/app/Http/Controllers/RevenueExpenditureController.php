@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\RevenueExpenditure;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Contracts\Providers\Auth;
 
@@ -13,10 +15,11 @@ class RevenueExpenditureController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $data = RevenueExpenditure::get();
+            $date = Carbon::parse($request->search)->format('Y-m-d');
+            $data = RevenueExpenditure::with('user')->whereDate('created_at', $date)->latest('id')->get();
 
             return response()->json($data, 200);
         } catch (Exception $e) {
@@ -80,8 +83,20 @@ class RevenueExpenditureController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RevenueExpenditure $revenueExpenditure)
+    public function destroy(Request $request, $id)
     {
-        //
+
+        DB::beginTransaction();
+        try {
+            $data = RevenueExpenditure::findOrFail($id);
+
+            $data->delete();
+
+            DB::commit();
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to delete purchase', 'message' => $e->getMessage()], 500);
+        }
     }
 }

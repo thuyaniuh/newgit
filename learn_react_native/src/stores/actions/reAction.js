@@ -28,21 +28,23 @@ export const fetchRE = (page = 1, search = "") => async (dispatch) => {
 };
 
 // Add a new user
-export const addUser = (userData) => async (dispatch) => {
+export const addRE = (userData) => async (dispatch) => {
     try {
         const token = await AsyncStorage.getItem("token");
-        const response = await api.post("api/revenue_expenditure", userData, {
+        const response = await api.post("api/revenue_expenditure/store", userData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`,
             },
         });
-        dispatch({
-            type: ADD_USER,
-            payload: response.data,
-        });
+        return true
+        // dispatch({
+        //     type: ADD_USER,
+        //     payload: response.data,
+        // });
     } catch (error) {
         console.error("Error adding user:", error);
+        return false
     }
 };
 
@@ -66,10 +68,10 @@ export const editUser = (id, userData) => async (dispatch) => {
 };
 
 // Delete a user
-export const deleteUser = (id) => async (dispatch) => {
+export const deleteRE = (id) => async (dispatch) => {
     try {
         const token = await AsyncStorage.getItem("token");
-        await api.delete(`api/RE/${id}`, {
+        await api.delete(`api/revenue_expenditure/${id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
