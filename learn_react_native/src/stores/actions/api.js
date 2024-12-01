@@ -11,7 +11,7 @@ const api = {
             });
             console.log(api_url + url);
             const data = await axiosInstance.get(url, { headers: headers });
-            console.log(data)
+            // console.log(data)
 
             return data;
         } catch (e) {

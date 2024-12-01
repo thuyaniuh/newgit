@@ -54,6 +54,15 @@ function AppStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{
+                    title: "",
+                    headerStyle: { backgroundColor: theme.colors.primary },
+                    headerTintColor: "#333",
+                }}
+            />
+            <Stack.Screen
                 name="Home"
                 component={HomeScreen}
                 options={({ navigation }) => ({
@@ -77,6 +86,7 @@ function AppStack() {
                     headerTintColor: "#333",
                 })}
             />
+            
             <Stack.Screen
                 name="todo"
                 component={ToDoScreen}
@@ -122,15 +132,7 @@ function AppStack() {
                     headerTintColor: "#333",
                 }}
             />
-            <Stack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{
-                    title: "Login",
-                    headerStyle: { backgroundColor: theme.colors.primary },
-                    headerTintColor: "#333",
-                }}
-            />
+            
             <Stack.Screen
                 name="ForgotPassword"
                 component={ForgotPasswordScreen}

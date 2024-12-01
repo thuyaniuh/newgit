@@ -86,7 +86,7 @@ function AddRevenueExpenditureScreen({ navigation }) {
         formData.append("note", description);
         try {
             if (dispatch(addRE(formData))) {
-                fetchRE(1, new Date().toISOString().split("T")[0]);
+                dispatch(fetchRE(1, new Date().toISOString().split("T")[0]));
                 setTimeout(function () {
                     navigation.goBack();
                 }, 1500);

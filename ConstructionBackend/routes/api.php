@@ -20,6 +20,8 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
+Route::get('/users/times/{id}', [UserController::class, 'times']);
+Route::post('/users/time', [UserController::class, 'time']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users/update/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
@@ -37,6 +39,7 @@ Route::get('/entry_by_user', [EntryController::class, 'getByUser']);
 
 // phiếu thu chi
 Route::get('/revenue_expenditure', [RevenueExpenditureController::class, 'index']);
+Route::post('/revenue_expenditure/export', [RevenueExpenditureController::class, 'export']);
 Route::post('/revenue_expenditure/store', [RevenueExpenditureController::class, 'store']);
 Route::get('/revenue_expenditure/{id}', [RevenueExpenditureController::class, 'show']);
 Route::put('/revenue_expenditure/update/{id}', [RevenueExpenditureController::class, 'update']);

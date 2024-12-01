@@ -11,6 +11,7 @@ import revenueExpenditureReducer from "./revenueExpenditureReducer";
 export default combineReducers({
     auth: authReducer,
     users: userReducer, // Add the userReducer here
+    users_time: userReducer, // Add the userReducer here
     suppliers: supplierReducer,
     materials: materialReducer,
     projects: projectReducer,

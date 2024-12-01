@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, StyleSheet, Alert } from "react-native";
+import {
+    View,
+    FlatList,
+    StyleSheet,
+    Alert,
+    PermissionsAndroid,
+    Platform,
+    TouchableOpacity,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRE, deleteRE } from "../stores/actions/reAction";
 import {
@@ -12,8 +20,12 @@ import {
     IconButton,
 } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as FileSystem from "expo-file-system";
+import axios from "axios";
+import Toast from "react-native-toast-message";
 
 export default function RevenueExpenditureScreen({ navigation }) {
+    const api_url = process.env.API_URL;
     const [search, setSearch] = useState("");
     const dispatch = useDispatch();
     const { revenue_expenditure, totalPages, currentPage } = useSelector(
@@ -42,8 +54,49 @@ export default function RevenueExpenditureScreen({ navigation }) {
 
     async function callDelete(id) {
         await dispatch(deleteRE(id));
-        await dispatch(fetchRE(currentPage, startDay.toISOString().split("T")[0]))
+        await dispatch(
+            fetchRE(currentPage, startDay.toISOString().split("T")[0])
+        );
     }
+
+    const downloadPDF = async () => {
+        try {
+            let formData = new FormData();
+            formData.append("search", startDay.toISOString().split("T")[0]);
+            // formData.append("user_id", user?.user_id);
+
+            const axiosInstance = await axios.create({
+                baseURL: api_url,
+                timeout: 60000, // 60 giây
+            });
+            console.log(api_url + "api/revenue_expenditure/export");
+            const data = await axiosInstance.post(
+                "api/revenue_expenditure/export",
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
+
+            const url = data?.data?.file_path;
+            const fileUri = `${FileSystem.documentDirectory}sample.pdf`;
+
+            try {
+                console.log(url)
+                const { uri } = await FileSystem.downloadAsync(url, fileUri);
+                alert(`File saved to: ${uri} or open ${url} to download`);
+            } catch (error) {
+                console.error(error);
+                alert("Failed to download file.");
+            }
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Chấm công thất bại",
+                text2: error.message,
+            });
+        }
+    };
 
     const renderData = ({ item }) => (
         <Card style={styles.card}>
@@ -82,7 +135,8 @@ export default function RevenueExpenditureScreen({ navigation }) {
     );
 
     const handleDateChange = (event, selectedDate, type) => {
-        const currentDate = selectedDate || (type === "start" ? startDay : endDay);
+        const currentDate =
+            selectedDate || (type === "start" ? startDay : endDay);
         if (type === "start") {
             setShowStartPicker(false);
             setStartDay(currentDate);
@@ -115,6 +169,14 @@ export default function RevenueExpenditureScreen({ navigation }) {
                 style={styles.searchButton}
             >
                 Tìm kiếm
+            </Button>
+
+            <Button
+                mode="contained"
+                onPress={() => downloadPDF()}
+                style={styles.exportButton}
+            >
+                Xuất file
             </Button>
 
             <FlatList
@@ -213,6 +275,10 @@ const styles = StyleSheet.create({
     addButton: {
         marginTop: 10,
         backgroundColor: "#007bff",
+    },
+    exportButton: {
+        marginTop: 0,
+        backgroundColor: "green",
     },
     taskButton: {
         marginRight: 10,

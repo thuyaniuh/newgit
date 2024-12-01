@@ -1,15 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, StyleSheet, Alert, TouchableOpacity, Text} from "react-native";
+import {
+    View,
+    FlatList,
+    StyleSheet,
+    Alert,
+    TouchableOpacity,
+    Text,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Card, Paragraph, Title, TextInput, IconButton, } from "react-native-paper";
+import {
+    Button,
+    Card,
+    Paragraph,
+    Title,
+    TextInput,
+    IconButton,
+} from "react-native-paper";
 import Toast from "react-native-toast-message";
-import { fetch_projects, delete_project } from "../stores/actions/projectAction";
+import {
+    fetch_projects,
+    delete_project,
+} from "../stores/actions/projectAction";
 
 function ProjectManagementScreen({ props, navigation }) {
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const dispatch = useDispatch();
     const { projects, totalPages } = useSelector((state) => state.projects);
+    const user = useSelector((state) => state.auth.user);
 
     useEffect(() => {
         dispatch(fetch_projects(currentPage, search));
@@ -59,31 +77,55 @@ function ProjectManagementScreen({ props, navigation }) {
             <View style={styles.cardContent}>
                 <View style={styles.infoContainer}>
                     <Title style={styles.projectName}>{item.name}</Title>
-                    <Paragraph style={styles.projectInfo}>Loại dự án: {item.type}</Paragraph>
-                    <Paragraph style={styles.projectInfo}>Ngày bắt đầu: {item.start_day}</Paragraph>
-                    <Paragraph style={styles.projectInfo}>Ngày kết thúc: {item.end_day}</Paragraph>
-                    <Paragraph style={styles.projectInfo}>Ngân sách: {item.budget}</Paragraph>
-                    <Paragraph style={styles.projectInfo}>Trạng thái: {item.status}</Paragraph>
+                    <Paragraph style={styles.projectInfo}>
+                        Loại dự án: {item.type}
+                    </Paragraph>
+                    <Paragraph style={styles.projectInfo}>
+                        Ngày bắt đầu: {item.start_day}
+                    </Paragraph>
+                    <Paragraph style={styles.projectInfo}>
+                        Ngày kết thúc: {item.end_day}
+                    </Paragraph>
+                    <Paragraph style={styles.projectInfo}>
+                        Ngân sách: {item.budget}
+                    </Paragraph>
+                    <Paragraph style={styles.projectInfo}>
+                        Trạng thái: {item.status}
+                    </Paragraph>
                 </View>
                 <View style={styles.actionContainer}>
                     <Button
                         mode="contained"
-                        onPress={() => navigation.navigate("TaskList", { projectId: item.project_id })}
+                        onPress={() =>
+                            navigation.navigate("TaskList", {
+                                projectId: item.project_id,
+                            })
+                        }
                         style={styles.taskButton}
                     >
                         Quản lý Task
                     </Button>
-                    <IconButton
-                        icon="pencil"
-                        onPress={() => navigation.navigate("EditProjectScreen", { project: item })}
-                        style={styles.iconButton}
-                    />
-                    <IconButton
-                        icon="delete"
-                        color="red"
-                        onPress={() => handleDeleteProject(item.project_id)}
-                        style={styles.iconButton}
-                    />
+                    {user?.role == "admin" && (
+                        <>
+                            <IconButton
+                                icon="pencil"
+                                onPress={() =>
+                                    navigation.navigate("EditProjectScreen", {
+                                        project: item,
+                                    })
+                                }
+                                style={styles.iconButton}
+                            />
+                            <IconButton
+                                icon="delete"
+                                color="red"
+                                onPress={() =>
+                                    handleDeleteProject(item.project_id)
+                                }
+                                style={styles.iconButton}
+                            />
+                        </>
+                    )}
                 </View>
             </View>
         </Card>
@@ -98,7 +140,12 @@ function ProjectManagementScreen({ props, navigation }) {
                 style={styles.searchInput}
                 mode="outlined"
                 placeholder="Nhập tên dự án"
-                right={<TextInput.Icon icon="magnify" onPress={() => dispatch(fetch_projects(1, search))} />}
+                right={
+                    <TextInput.Icon
+                        icon="magnify"
+                        onPress={() => dispatch(fetch_projects(1, search))}
+                    />
+                }
             />
             <Button
                 mode="contained"
@@ -107,7 +154,6 @@ function ProjectManagementScreen({ props, navigation }) {
             >
                 Tìm kiếm
             </Button>
-
 
             <FlatList
                 data={projects}
@@ -125,7 +171,6 @@ function ProjectManagementScreen({ props, navigation }) {
             >
                 Thêm Dự Án
             </Button>
-            
         </View>
     );
 }

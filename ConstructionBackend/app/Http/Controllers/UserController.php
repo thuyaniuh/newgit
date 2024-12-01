@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\ProjectUser;
+use App\Models\Timekeeping;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
@@ -122,10 +124,10 @@ class UserController extends Controller
                 "email" => $request->email,
             ]);
 
-            if(!empty($request->type)) {
+            if (!empty($request->type)) {
                 $data = ProjectUser::where('user_id', $id)->where('project_id', $request->type)->first();
                 Log::info($data);
-                if(empty($data)) {
+                if (empty($data)) {
                     ProjectUser::create([
                         "project_id" => $request->type,
                         "user_id" => $id,
@@ -150,5 +152,71 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function times($id)
+    {
+        $data = Timekeeping::join('project_users', 'project_users.id', 'timekeepings.project_user_id')
+            ->join('projects', 'projects.project_id', 'project_users.project_id')
+            ->select(['timekeepings.*', 'project_users.user_id', 'projects.name'])
+            ->where('project_users.user_id', $id)
+            ->latest('timekeepings.id')
+            ->get();
+
+        $money = Timekeeping::join('project_users', 'project_users.id', 'timekeepings.project_user_id')
+            ->join('projects', 'projects.project_id', 'project_users.project_id')->whereMonth('timekeepings.created_at', Carbon::now()->month)
+            ->whereYear('timekeepings.created_at', Carbon::now()->year)
+            ->where('timekeepings.status', '!=', 3)
+            ->where('project_users.user_id', $id)
+            ->sum('timekeepings.money');
+
+        Log::info($data);
+
+        return response()->json([
+            "data" => $data,
+            "money" => $money,
+        ], 200);
+    }
+
+    public function time(Request $request)
+    {
+        try {
+            $user = User::where('user_id', $request->user_id)->first();
+            $project = Project::where('project_id', $request->project_id)->first();
+
+            $project_user = ProjectUser::where('user_id', $request->user_id)->where('project_id', $request->project_id)->first();
+
+            if ($user->role == "worker") {
+                $money = 200000;
+            } else {
+                $money = 400000;
+            }
+
+            if ($request->status == 2) {
+                $money -= 50000;
+            } elseif ($request->status == 3) {
+                $money = 0;
+            }
+
+            $data = Timekeeping::where('project_user_id', $project_user->id)->whereDate('created_at', Carbon::now()->format('Y-m-d'))->first();
+
+            if (!empty($data)) {
+                return response()->json([
+                    "success" => "Đã chấm công từ trước rồi"
+                ], 201);
+            }
+
+            Timekeeping::create([
+                "project_user_id" => $project_user->id,
+                "status" => $request->status,
+                "money" => $money,
+            ]);
+
+            return response()->json([
+                "success" => "Đã chấm công thành công"
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json($e->getMessage(), 500);
+        }
     }
 }

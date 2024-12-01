@@ -15,19 +15,21 @@ import {
     Title,
     Paragraph,
 } from "react-native-paper";
+import { fetchUsersTime } from "../stores/actions/userActions";
 
 function EntryScreen({ route, navigation }) {
     const { users } = route.params;
     const project = route.params.item;
     const dispatch = useDispatch();
-    const { tasks } = useSelector((state) => state.tasks);
+    const { users_time } = useSelector((state) => state.users_time);
+    const user = useSelector((state) => state.auth.user);
     const [modalVisible, setModalVisible] = useState(false);
     const [currentTask, setCurrentTask] = useState({});
     const [isEditing, setIsEditing] = useState(false);
     // console.log(projectId);
-    // useEffect(() => {
-    //     dispatch(fetchTasks(users));
-    // }, [dispatch, users]);
+    useEffect(() => {
+        dispatch(fetchUsersTime(users.user_id));
+    }, [dispatch, users]);
 
     const handleAddTask = () => {
         setIsEditing(false);
@@ -60,25 +62,48 @@ function EntryScreen({ route, navigation }) {
     const renderTask = ({ item }) => (
         <Card style={styles.card}>
             <Card.Content>
-                <Title>{item.name}</Title>
+                <Title style={styles.font_btitle}>{item.name}</Title>
                 <Paragraph>Project: {item.name}</Paragraph>
+                <Paragraph>Tiền công: {item.money}</Paragraph>
+                <Paragraph>Trạng thái: {renderElement(item.status)}</Paragraph>
+                <Paragraph>Ngày: {item.created_at}</Paragraph>
             </Card.Content>
         </Card>
     );
 
+    const renderElement = (status) => {
+        if (status == 1) {
+            return "Có mặt";
+        } else if (status == 2) {
+            return "Trễ";
+        } else {
+            return "Nghỉ";
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <Button
-                mode="contained"
-                onPress={() => navigation.navigate("AddEntry", { user: users, navigation: navigation })}
-                style={styles.addButton}
-            >
-                Add timekeeping
-            </Button>
+            {user?.role !== "worker" && (
+                <Button
+                    mode="contained"
+                    onPress={() =>
+                        navigation.navigate("AddEntry", {
+                            user: users,
+                            navigation: navigation,
+                        })
+                    }
+                    style={styles.addButton}
+                >
+                    Add timekeeping
+                </Button>
+            )}
+
+            <Title>Tổng tiền công tháng này: {users_time?.money}</Title>
+
             <FlatList
-                data={tasks}
+                data={users_time?.data}
                 renderItem={renderTask}
-                keyExtractor={(item) => item.task_id.toString()}
+                keyExtractor={(item) => item.id.toString()}
             />
             <Modal
                 visible={modalVisible}
@@ -106,6 +131,9 @@ const styles = StyleSheet.create({
     card: { marginBottom: 10 },
     addButton: { marginBottom: 15 },
     modalContent: { padding: 20, backgroundColor: "white" },
+    font_btitle: {
+        fontWeight: "bold",
+    },
 });
 
 export default EntryScreen;

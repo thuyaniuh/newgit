@@ -70,7 +70,7 @@ export function DrawerContent(props) {
                 />
                 {user && (
                     <List.Accordion
-                    style={{ marginLeft: 12 }}
+                        style={{ marginLeft: 12 }}
                         title="Management"
                         // left={(props) => <List.Icon {...props} icon="folder" />}
                     >
@@ -80,46 +80,58 @@ export function DrawerContent(props) {
                                 props.navigation.navigate("UserManagement")
                             }
                         />
-                        <Drawer.Item
-                            label="Supplier Management"
-                            onPress={() =>
-                                props.navigation.navigate("SupplierManagement")
-                            }
-                        />
-                        <Drawer.Item
-                            label="Material Management"
-                            onPress={() =>
-                                props.navigation.navigate("MaterialScreen")
-                            }
-                        />
-                        <Drawer.Item
-                            label="Project Management"
-                            onPress={() =>
-                                props.navigation.navigate("ProjectManagement")
-                            }
-                        />
-                        <Drawer.Item
-                            label="Purchase Management"
-                            onPress={() =>
-                                props.navigation.navigate("PurchaseScreen")
-                            }
-                        />
-                        <Drawer.Item
-                            label="Revenue Expenditure"
-                            onPress={() =>
-                                props.navigation.navigate(
-                                    "RevenueExpenditureScreen"
-                                )
-                            }
-                        />
+                        {user?.role != "worker" && (
+                            <>
+                                <Drawer.Item
+                                    label="Supplier Management"
+                                    onPress={() =>
+                                        props.navigation.navigate(
+                                            "SupplierManagement"
+                                        )
+                                    }
+                                />
+                                <Drawer.Item
+                                    label="Material Management"
+                                    onPress={() =>
+                                        props.navigation.navigate(
+                                            "MaterialScreen"
+                                        )
+                                    }
+                                />
+                                <Drawer.Item
+                                    label="Project Management"
+                                    onPress={() =>
+                                        props.navigation.navigate(
+                                            "ProjectManagement"
+                                        )
+                                    }
+                                />
+                                <Drawer.Item
+                                    label="Purchase Management"
+                                    onPress={() =>
+                                        props.navigation.navigate(
+                                            "PurchaseScreen"
+                                        )
+                                    }
+                                />
+                                <Drawer.Item
+                                    label="Revenue Expenditure"
+                                    onPress={() =>
+                                        props.navigation.navigate(
+                                            "RevenueExpenditureScreen"
+                                        )
+                                    }
+                                />
+                            </>
+                        )}
                     </List.Accordion>
                 )}
                 {user && (
                     // <Drawer.Section>
-                        <Drawer.Item
-                            label="Logout"
-                            onPress={() => handleLogout()}
-                        />
+                    <Drawer.Item
+                        label="Logout"
+                        onPress={() => handleLogout()}
+                    />
                     // </Drawer.Section>
                 )}
             </Drawer.Section>

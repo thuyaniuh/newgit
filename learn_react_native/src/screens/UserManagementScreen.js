@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, StyleSheet, Alert , Text} from "react-native";
+import { View, FlatList, StyleSheet, Alert, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers, deleteUser } from "../stores/actions/userActions";
-import { Button, TextInput, Card, Paragraph, Title, Avatar, IconButton } from "react-native-paper";
+import {
+    Button,
+    TextInput,
+    Card,
+    Paragraph,
+    Title,
+    Avatar,
+    IconButton,
+} from "react-native-paper";
 
 export default function UserManagementScreen({ navigation }) {
     const [search, setSearch] = useState("");
     const dispatch = useDispatch();
-    const { users, totalPages, currentPage } = useSelector((state) => state.users);
+    const { users, totalPages, currentPage } = useSelector(
+        (state) => state.users
+    );
+    const user = useSelector((state) => state.auth.user);
 
     useEffect(() => {
         dispatch(fetchUsers(currentPage, search));
@@ -29,28 +40,46 @@ export default function UserManagementScreen({ navigation }) {
             <Card.Title
                 title={item.name}
                 subtitle={item.email}
-                left={(props) => item.avatar_url ?
-                    <Avatar.Image {...props} source={{ uri: item.avatar_url }} /> :
-                    <Avatar.Icon {...props} icon="account" />
+                left={(props) =>
+                    item.avatar_url ? (
+                        <Avatar.Image
+                            {...props}
+                            source={{ uri: item.avatar_url }}
+                        />
+                    ) : (
+                        <Avatar.Icon {...props} icon="account" />
+                    )
                 }
                 right={(props) => (
                     <>
                         <IconButton
                             {...props}
                             icon="calendar"
-                            onPress={() => navigation.navigate("EntryScreen", { users: item })}
+                            onPress={() =>
+                                navigation.navigate("EntryScreen", {
+                                    users: item,
+                                })
+                            }
                         />
-                        <IconButton
-                            {...props}
-                            icon="pencil"
-                            onPress={() => navigation.navigate("EditUser", { user: item })}
-                        />
-                        <IconButton
-                            {...props}
-                            icon="delete"
-                            color="red"
-                            onPress={() => handleDelete(item.user_id)}
-                        />
+                        {user?.role !== "worker" && (
+                            <>
+                                <IconButton
+                                    {...props}
+                                    icon="pencil"
+                                    onPress={() =>
+                                        navigation.navigate("EditUser", {
+                                            user: item,
+                                        })
+                                    }
+                                />
+                                <IconButton
+                                    {...props}
+                                    icon="delete"
+                                    color="red"
+                                    onPress={() => handleDelete(item.user_id)}
+                                />
+                            </>
+                        )}
                     </>
                 )}
             />
@@ -63,7 +92,7 @@ export default function UserManagementScreen({ navigation }) {
                     <FlatList
                         data={item?.projects}
                         renderItem={renderProject}
-                        keyExtractor={(item) => getRandomInt(1,10000)}
+                        keyExtractor={(item) => getRandomInt(1, 10000)}
                         style={styles.list}
                     />
                 </Paragraph>
@@ -79,7 +108,7 @@ export default function UserManagementScreen({ navigation }) {
         <View style={styles.infoContainer}>
             <Text>{item?.name}</Text>
         </View>
-    )
+    );
 
     return (
         <View style={styles.container}>
@@ -91,8 +120,20 @@ export default function UserManagementScreen({ navigation }) {
                 mode="outlined"
                 onSubmitEditing={() => dispatch(fetchUsers(1, search))}
             />
-            <Button mode="contained" onPress={() => dispatch(fetchUsers(1, search))} style={styles.searchButton}>
+            <Button
+                mode="contained"
+                onPress={() => dispatch(fetchUsers(1, search))}
+                style={styles.searchButton}
+            >
                 Tìm kiếm
+            </Button>
+
+            <Button
+                mode="contained"
+                style={styles.addButton}
+                onPress={() => navigation.navigate("AddUser")}
+            >
+                Thêm Người Dùng
             </Button>
 
             <FlatList
@@ -114,14 +155,6 @@ export default function UserManagementScreen({ navigation }) {
                     </Button>
                 ))}
             </View>
-
-            <Button
-                mode="contained"
-                style={styles.addButton}
-                onPress={() => navigation.navigate("AddUser")}
-            >
-                Thêm Người Dùng
-            </Button>
         </View>
     );
 }
@@ -152,7 +185,9 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     addButton: {
-        marginTop: 20,
+        marginBottom: 20,
+        color: "blue",
+        backgroundColor: "blue",
     },
     actionContainer: {
         flexDirection: "row",
@@ -163,7 +198,7 @@ const styles = StyleSheet.create({
     projectName: {
         fontSize: 18,
         fontWeight: "bold",
-        marginBottom: 20
+        marginBottom: 20,
     },
     projectInfo: {
         fontSize: 14,
@@ -171,6 +206,6 @@ const styles = StyleSheet.create({
     infoContainer1: {
         paddingLeft: 10,
         marginLeft: 10,
-        marginBottom:20
-    }
+        marginBottom: 20,
+    },
 });
