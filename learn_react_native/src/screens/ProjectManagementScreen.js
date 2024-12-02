@@ -164,13 +164,15 @@ function ProjectManagementScreen({ props, navigation }) {
 
             {renderPagination()}
 
-            <Button
-                mode="contained"
-                style={styles.addButton}
-                onPress={() => navigation.navigate("AddProjectScreen")}
-            >
-                Thêm Dự Án
-            </Button>
+            {user?.role == "admin" && (
+                <Button
+                    mode="contained"
+                    style={styles.addButton}
+                    onPress={() => navigation.navigate("AddProjectScreen")}
+                >
+                    Thêm Dự Án
+                </Button>
+            )}
         </View>
     );
 }

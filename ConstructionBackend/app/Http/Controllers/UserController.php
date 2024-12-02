@@ -29,8 +29,12 @@ class UserController extends Controller
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('user_id', 'like', "%{$search}%");
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if (!empty($request->user_id) && $request->user_id != 0) {
+            Log::info($request->user_id);
+            $query = $query->where('user_id', $request->user_id);
         }
 
         $users = $query->latest('user_id')->paginate(8);

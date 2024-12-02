@@ -9,11 +9,11 @@ export const EDIT_USER = "EDIT_USER";
 export const DELETE_USER = "DELETE_USER";
 
 // Fetch users with pagination and search
-export const fetchUsers = (page = 1, search = "") => async (dispatch) => {
+export const fetchUsers = (page = 1, search = "", user_id = 0) => async (dispatch) => {
     try {
         const token = await AsyncStorage.getItem("token");
         console.log("aaaa", token);
-        const response = await api.get(`api/users?page=${page}&search=${search}`, {
+        const response = await api.get(`api/users?page=${page}&search=${search}&user_id=${user_id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,

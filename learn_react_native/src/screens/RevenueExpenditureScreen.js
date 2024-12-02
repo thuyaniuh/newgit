@@ -7,6 +7,7 @@ import {
     PermissionsAndroid,
     Platform,
     TouchableOpacity,
+    Linking
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRE, deleteRE } from "../stores/actions/reAction";
@@ -37,9 +38,9 @@ export default function RevenueExpenditureScreen({ navigation }) {
         dispatch(fetchRE(currentPage, search));
     }, [dispatch, currentPage, search]);
 
-    useEffect(() => {
-        dispatch(fetchRE(currentPage, startDay.toISOString().split("T")[0]));
-    }, [startDay]);
+    // useEffect(() => {
+    //     dispatch(fetchRE(currentPage, startDay.toISOString().split("T")[0]));
+    // }, [startDay]);
 
     const handleDelete = (id) => {
         Alert.alert(
@@ -79,20 +80,22 @@ export default function RevenueExpenditureScreen({ navigation }) {
             );
 
             const url = data?.data?.file_path;
+            
             const fileUri = `${FileSystem.documentDirectory}sample.pdf`;
 
             try {
                 console.log(url)
-                const { uri } = await FileSystem.downloadAsync(url, fileUri);
-                alert(`File saved to: ${uri} or open ${url} to download`);
+                // const { uri } = await FileSystem.downloadAsync(url, fileUri);
+                // Alert.alert(`File saved to: ${uri} or open ${url} to download`);
+                await Linking.openURL(url);
             } catch (error) {
                 console.error(error);
-                alert("Failed to download file.");
+                Alert.alert("Failed to download file.");
             }
         } catch (error) {
             Toast.show({
                 type: "error",
-                text1: "Chấm công thất bại",
+                text1: "Lỗi download",
                 text2: error.message,
             });
         }
@@ -165,7 +168,7 @@ export default function RevenueExpenditureScreen({ navigation }) {
             )}
             <Button
                 mode="contained"
-                onPress={() => dispatch(fetchRE(1, search))}
+                onPress={() => dispatch(fetchRE(1, startDay.toISOString().split("T")[0]))}
                 style={styles.searchButton}
             >
                 Tìm kiếm

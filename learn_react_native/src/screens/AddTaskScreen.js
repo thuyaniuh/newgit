@@ -6,6 +6,7 @@ import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../stores/actions/userActions";
 import { add_task, fetchTasks } from "../stores/actions/taskActions";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 function AddTaskScreen({ route, navigation }) {
     const { projectId } = route.params;
@@ -14,9 +15,13 @@ function AddTaskScreen({ route, navigation }) {
     const dispatch = useDispatch();
 
     const [name, setName] = useState("");
-    const [startDay, setStartDay] = useState("");
-    const [endDay, setEndDay] = useState("");
+    // const [startDay, setStartDay] = useState("");
+    // const [endDay, setEndDay] = useState("");
     const [status, setStatus] = useState("");
+    const [startDay, setStartDay] = useState(new Date('2024-10-10'));
+    const [endDay, setEndDay] = useState(new Date());
+    const [showStartPicker, setShowStartPicker] = useState(false);
+    const [showEndPicker, setShowEndPicker] = useState(false);
     const [statusOpen, setStatusOpen] = useState(false);
     const [userId, setUserId] = useState("");
     const [userOpen, setUserOpen] = useState(false);
@@ -32,18 +37,37 @@ function AddTaskScreen({ route, navigation }) {
         dispatch(fetchUsers());
     }, [dispatch]);
 
+    const handleDateChange = (event, selectedDate, type) => {
+        const currentDate = selectedDate || (type === "start" ? startDay : endDay);
+        if (type === "start") {
+            setShowStartPicker(false);
+            setStartDay(currentDate);
+        } else {
+            setShowEndPicker(false);
+            setEndDay(currentDate);
+        }
+    };
+
     const handleSubmit = async () => {
         if (!name || !userId || !startDay || !endDay || !status) {
             Alert.alert("Error", "Please fill all fields correctly");
             return;
         }
 
+        if (new Date(endDay) < new Date(startDay)) {
+            Alert.alert("Error", "End date cannot be before start date");
+            return;
+        }
+
+
         let formData = new FormData();
         formData.append("name", name);
         formData.append("project_id", projectId);
         formData.append("user_id", userId);
-        formData.append("start_day", startDay);
-        formData.append("end_day", endDay);
+        // formData.append("start_day", startDay);
+        // formData.append("end_day", endDay);
+        formData.append("start_day", startDay.toISOString().split("T")[0]);
+        formData.append("end_day", endDay.toISOString().split("T")[0]);
         formData.append("status", status);
         
 
@@ -89,7 +113,7 @@ function AddTaskScreen({ route, navigation }) {
                         style={styles.dropdown}
                         dropDownContainerStyle={styles.dropdownContainer}
                     />
-                    <TextInput
+                    {/* <TextInput
                         label="Start Date"
                         value={startDay}
                         onChangeText={setStartDay}
@@ -104,7 +128,8 @@ function AddTaskScreen({ route, navigation }) {
                         style={styles.input}
                         mode="outlined"
                         placeholder="YYYY-MM-DD"
-                    />
+                    /> */}
+                    
                     <DropDownPicker
                         open={statusOpen}
                         value={status}
@@ -115,6 +140,36 @@ function AddTaskScreen({ route, navigation }) {
                         style={styles.dropdown}
                         dropDownContainerStyle={styles.dropdownContainer}
                     />
+                    <Button
+                        mode="outlined"
+                        onPress={() => setShowStartPicker(true)}
+                        style={styles.dateButton}
+                    >
+                        Select Start Date: {startDay.toISOString().split("T")[0]}
+                    </Button>
+                    {showStartPicker && (
+                        <DateTimePicker
+                            value={startDay}
+                            mode="date"
+                            display="default"
+                            onChange={(e, date) => handleDateChange(e, date, "start")}
+                        />
+                    )}
+                    <Button
+                        mode="outlined"
+                        onPress={() => setShowEndPicker(true)}
+                        style={styles.dateButton}
+                    >
+                        Select End Date: {endDay.toISOString().split("T")[0]}
+                    </Button>
+                    {showEndPicker && (
+                        <DateTimePicker
+                            value={endDay}
+                            mode="date"
+                            display="default"
+                            onChange={(e, date) => handleDateChange(e, date, "end")}
+                        />
+                    )}
                 </Card.Content>
             </Card>
             <Button mode="contained" onPress={handleSubmit} style={styles.submitButton}>
@@ -153,6 +208,9 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingVertical: 10,
     },
+    dateButton: {
+        marginBottom: 10,
+    }
 });
 
 export default AddTaskScreen;
