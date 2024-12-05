@@ -52,16 +52,11 @@ export const fetchUsersTime = (user_id , page = 1, search = "") => async (dispat
 // Add a new user
 export const addUser = (userData) => async (dispatch) => {
     try {
-        const token = await AsyncStorage.getItem("token");
+        // const token = await AsyncStorage.getItem("token");
         const response = await api.post("api/users", userData, {
             headers: {
                 "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`,
             },
-        });
-        dispatch({
-            type: ADD_USER,
-            payload: response.data,
         });
     } catch (error) {
         console.error("Error adding user:", error);

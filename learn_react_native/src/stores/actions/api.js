@@ -30,7 +30,7 @@ const api = {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             // const response = await axios.post(api_url + url, data, { headers: headers , timeout: 30000,})
-            await console.log(await response?.data)
+            // await console.log(response?.data)
             return response;
         } catch (e) {
             console.error(e);

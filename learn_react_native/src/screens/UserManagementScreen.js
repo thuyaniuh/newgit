@@ -19,6 +19,7 @@ export default function UserManagementScreen({ navigation }) {
         (state) => state.users
     );
     const user = useSelector((state) => state.auth.user);
+    const api_url = process.env.API_URL;
 
     useEffect(() => {
         if (user?.role === "worker") {
@@ -40,6 +41,7 @@ export default function UserManagementScreen({ navigation }) {
     };
 
     const renderUser = ({ item }) => (
+        
         <Card style={styles.card}>
             <Card.Title
                 title={item.name}
@@ -48,7 +50,7 @@ export default function UserManagementScreen({ navigation }) {
                     item.avatar_url ? (
                         <Avatar.Image
                             {...props}
-                            source={{ uri: item.avatar_url }}
+                            source={{ uri: api_url + 'storage/' + item.avatar }}
                         />
                     ) : (
                         <Avatar.Icon {...props} icon="account" />

@@ -56,29 +56,38 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'active_status' => 'required|in:active,locked',
-        ]);
+        try {
+            Log::info(request()->all());
 
-        $avatarPath = null;
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+                'active_status' => 'required|in:active,locked',
+            ]);
+
+            $avatarPath = null;
+            if ($request->hasFile('avatar')) {
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            }
+
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'active_status' => $validated['active_status'],
+                'avatar' => $avatarPath,
+                'role' =>  $request->role,
+                'birth' => Carbon::parse($request->input('birth')),
+                'phone' => $request->input('phone', ''),
+            ]);
+            Log::info($user);
+
+            return response()->json($user, 200);
+        } catch (Exception $e) {
+            Log::info($e);
+            return response()->json($e, 500);
         }
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'active_status' => $validated['active_status'],
-            'avatar' => $avatarPath,
-            'birth' => Carbon::parse($request->input('birth')),
-            'phone' => $request->input('phone', ''),
-        ]);
-
-        return response()->json($user, 201);
     }
 
     /**

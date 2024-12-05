@@ -2,21 +2,30 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useDispatch } from "react-redux";
-import { addUser } from "../stores/actions/userActions";
+import { addUser, fetchUsers } from "../stores/actions/userActions";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { launchImageLibrary } from "react-native-image-picker";
 import * as ImagePicker from "expo-image-picker";
+import DropDownPicker from "react-native-dropdown-picker";
+import Toast from "react-native-toast-message";
 
 export default function AddUserScreen({ navigation }) {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [name, setName] = useState("user test 123");
+    const [email, setEmail] = useState("admin@gmai.com");
+    const [password, setPassword] = useState("Password123.");
     const [imageUri, setImageUri] = useState(null);
     // const [imageUri, setImageUri] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [typeOpen, setTypeOpen] = useState(false);
+    const [type, setType] = useState("worker");
 
     const dispatch = useDispatch();
+
+    const roles = [
+        { label: "worker", value: "worker" },
+        { label: "manager", value: "manager" },
+    ];
 
     useEffect(() => {
         (async () => {
@@ -42,33 +51,21 @@ export default function AddUserScreen({ navigation }) {
         formData.append('password', password);
         formData.append('active_status', 'active');
         formData.append('dateOfBirth', dateOfBirth);
+        formData.append('role', type);
         // console.log(dateOfBirth)
         // console.log(name)
         // console.log(email)
         // console.log(password)
         dispatch(addUser(formData));
-        // navigation.goBack();
+        dispatch(fetchUsers(1, "", 0))
+        Toast.show({
+            type: "success",
+            text1: "Add User successful",
+        });
+        navigation.goBack();
     };
 
     const selectImage = async () => {
-        // ImagePicker.launchCameraAsync({
-        //     mediaType: 'photo',
-        //     base64: true,
-        //     maxHeight: 200,
-        //     maxWidth: 200,
-        // }).then((response) => {
-        //     console.log(response);
-        //     if (!response.cancelled && !response.errorCode) {
-        //         const base64Image = response.base64;
-        //         console.log(base64Image);
-        //         setImageUri(base64Image);
-        //     } else {
-        //         console.log(response);
-        //     }
-        // }).catch((error) => {
-        //     console.log(error);
-        // })
-
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
@@ -106,6 +103,17 @@ export default function AddUserScreen({ navigation }) {
                 secureTextEntry
                 onChangeText={setPassword}
             />
+
+<DropDownPicker
+                        open={typeOpen}
+                        value={type}
+                        items={roles}
+                        setOpen={setTypeOpen}
+                        setValue={setType}
+                        placeholder="Select Project Type"
+                        style={styles.dropdown}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                    />
 
             {/* Show selected image */}
             {imageUri && (
@@ -162,17 +170,21 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     input: {
-        marginBottom: 20,
+        marginTop: 20,
+    },
+    dropdown: {
+        marginTop: 20,
     },
     imagePreview: {
         width: "100%",
         height: 150,
-        marginBottom: 20,
+        marginTop: 20,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: "#ccc",
     },
     button: {
         paddingVertical: 10,
+        marginTop: 20,
     },
 });
