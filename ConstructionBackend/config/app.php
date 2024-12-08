@@ -55,7 +55,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'TWILIO_SID' => env('TWILIO_SID', 'http://localhost'),
+    'TWILIO_AUTH_TOKEN' => env('TWILIO_AUTH_TOKEN', 'http://localhost'),
+    'TWILIO_PHONE_NUMBER' => env('TWILIO_PHONE_NUMBER', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 

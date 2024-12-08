@@ -18,6 +18,7 @@ class RevenueExpenditure extends Model
         'note', // ghi chú
         'money', // số tiền
         'images', // ảnh chứng từ
+        'type_trans', // ảnh chứng từ
     ];
 
     public function user()

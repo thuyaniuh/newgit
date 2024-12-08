@@ -61,18 +61,21 @@ class RevenueExpenditureController extends Controller
     public function store(Request $request)
     {
         try {
-            $avatarPath = null;
+            Log::info($request->all());
+            $urlPath = null;
             if ($request->hasFile('images')) {
-                $avatarPath = $request->file('images')->store('images', 'public');
+                $urlPath = $request->file('images')->store('re', 'public');
+                Log::info($request->all());
             }
             $data = [
                 'user_id' => $request->user_id,
                 'type_re' => $request->type_re,
                 'note' => $request->note,
                 'money' => $request->money,
+                'type_trans' => $request->type_trans,
             ];
-            if (!empty($avatarPath)) {
-                $data['images'] = $avatarPath;
+            if (!empty($urlPath)) {
+                $data['images'] = $urlPath;
             }
             $data = RevenueExpenditure::create($data);
 

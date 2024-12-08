@@ -38,15 +38,24 @@
         <table>
             <tr>
                 <th>ID</th>
-                <th>Money</th>
-                <th>Type Re</th>
+                <th>Sô tiên</th>
+                <th>Phương thức</th>
+                <th>Loại phiếu</th>
+                <th>Nội dung</th>
                 <th>User</th>
-                <th>Created At</th>
+                <th>Ngày</th>
             </tr>
             @foreach ($data as $value)
                 <tr>
                     <td>{{ $value['id'] }}</td>
                     <td>{{ $value['money'] }}</td>
+                    <td>
+                        @if ($value['type_trans'] == 0)
+                            {{ 'Tiền mặt' }}
+                        @else
+                            {{ 'Chuyển khoản' }}
+                        @endif
+                    </td>
                     <td>
                         @if ($value['type_re'] == 0)
                             {{ 'Phiếu thu' }}
@@ -54,8 +63,9 @@
                             {{ 'Phiếu chi' }}
                         @endif
                     </td>
+                    <th>{{ $value['note'] }}</th>
                     <td>{{ $value['user']['name'] }}</td>
-                    <td>{{ $value['created_at'] }} at</td>
+                    <td>{{ date('d/m/y', strtotime($value['created_at'])) }} at</td>
                 </tr>
             @endforeach
         </table>

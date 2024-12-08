@@ -15,6 +15,7 @@ use App\Http\Controllers\TaskController;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/user-profile', [AuthController::class, 'userProfile']);
+Route::post('/users/otp', [AuthController::class, 'otp']);
 
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 
