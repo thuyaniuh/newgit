@@ -12,10 +12,11 @@ import { signup } from "../stores/actions/authActions";
 import Toast from "react-native-toast-message";
 import { useDispatch } from "react-redux";
 function SignupScreen({ props, navigation }) {
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirm, setConfirm] = useState("");
+    const [email, setEmail] = useState("test@admin.com");
+    const [username, setUsername] = useState("user test");
+    const [password, setPassword] = useState("Password123@");
+    const [phone, setPhone] = useState("0335431858");
+    const [confirm, setConfirm] = useState("Password123@");
     const [passwordError, setPasswordError] = useState("");
 
     const dispatch = useDispatch();
@@ -68,6 +69,7 @@ function SignupScreen({ props, navigation }) {
 
         const form_data = new FormData();
         form_data.append("email", email);
+        form_data.append("phone", phone);
         form_data.append("name", username);
         form_data.append("password", password);
         form_data.append("password_confirmation", confirm);
@@ -78,7 +80,7 @@ function SignupScreen({ props, navigation }) {
                 type: 'success',
                 text1: 'Sign up successful',
             });
-            navigation.navigate('Login');
+            navigation.navigate('OtpScreen', { phone: phone });
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 const errorMessage = error.response.data.error || 'Invalid data provided';
@@ -106,6 +108,12 @@ function SignupScreen({ props, navigation }) {
                 placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Phone"
+                value={phone}
+                onChangeText={setPhone}
             />
             <TextInput
                 style={styles.input}

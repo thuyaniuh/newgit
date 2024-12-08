@@ -20,8 +20,11 @@ export const login = (formData) => async (dispatch) => {
                 token,
             },
         });
+
+        return true
     } catch (error) {
         console.error("Login error:", error);
+        return false
     }
 };
 

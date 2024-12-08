@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Alert, ScrollView, Text } from "react-native";
+import { View, StyleSheet, Alert, ScrollView, Text, Image } from "react-native";
 import { Button, TextInput, Card } from "react-native-paper";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -8,6 +8,7 @@ import { userAction } from "../stores/actions/userActions";
 import { convertNumberToVietnameseText } from "../utils/numberToText"; // Hàm chuyển đổi số thành chữ tiếng Việt
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import * as ImagePicker from "expo-image-picker";
 
 function AddRevenueExpenditureScreen({ navigation }) {
     const api_url = process.env.API_URL;
@@ -23,14 +24,42 @@ function AddRevenueExpenditureScreen({ navigation }) {
     const [showStartPicker, setShowStartPicker] = useState(false);
     const [showEndPicker, setShowEndPicker] = useState(false);
     const [status, setStatus] = useState("active");
+    const [status1, setStatus1] = useState(0);
     const [statusOpen, setStatusOpen] = useState(false);
+    const [statusOpen1, setStatusOpen1] = useState(false);
     const [typeOpen, setTypeOpen] = useState(false);
+    const [imageUri, setImageUri] = useState(null);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
         getUsers();
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            const { status } =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+                alert(
+                    "Sorry, we need camera roll permissions to make this work!"
+                );
+            }
+        })();
+    }, []);
+
+    const selectImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: false,
+            // aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setImageUri(result.assets[0].uri); // Fix the URI path
+        }
+    };
 
     async function getUsers() {
         const axiosInstance = await axios.create({
@@ -61,6 +90,11 @@ function AddRevenueExpenditureScreen({ navigation }) {
         { label: "Phiếu chi", value: "1" },
     ];
 
+    const money_type = [
+        { label: "Tiền mặt", value: "0" },
+        { label: "Chuyển khoản", value: "1" },
+    ];
+
     // const handleDateChange = (event, selectedDate, type) => {
     //     // const currentDate = selectedDate || (type === "start" ? startDay : endDay);
     //     if (type === "start") {
@@ -78,9 +112,23 @@ function AddRevenueExpenditureScreen({ navigation }) {
             return;
         }
 
+        if (!imageUri) return;
+
         let formData = new FormData();
+
+        const fileUri = imageUri;
+        const fileType = fileUri.split(".").pop();
+        formData.append("images", {
+            uri: fileUri,
+            name: `photo.${fileType}`,
+            type: `image/${fileType}`,
+        });
+
         // formData.append("name", name);
         formData.append("user_id", type);
+        formData.append("type_trans", status1);
+        // console.log(status1)
+        // return
         formData.append("money", budget);
         formData.append("type_re", status);
         formData.append("note", description);
@@ -113,6 +161,18 @@ function AddRevenueExpenditureScreen({ navigation }) {
                         style={styles.dropdown}
                         dropDownContainerStyle={styles.dropdownContainer}
                     />
+
+                    <DropDownPicker
+                        open={statusOpen1}
+                        value={status1}
+                        items={money_type}
+                        setOpen={setStatusOpen1}
+                        setValue={setStatus1}
+                        placeholder="Select type transaction"
+                        style={styles.dropdown1}
+                        dropDownContainerStyle={styles.dropdownContainer1}
+                    />
+
                     <TextInput
                         label="Money"
                         value={budget}
@@ -134,6 +194,21 @@ function AddRevenueExpenditureScreen({ navigation }) {
                         mode="outlined"
                         multiline
                     />
+                    {imageUri && (
+                        <Image
+                            source={{ uri: imageUri }}
+                            style={styles.imagePreview}
+                        />
+                    )}
+
+                    <Button
+                        mode="outlined"
+                        onPress={selectImage}
+                        style={styles.input}
+                    >
+                        {imageUri ? "Change Image" : "Upload Image"}
+                    </Button>
+
                     <DropDownPicker
                         open={typeOpen}
                         value={type}
@@ -171,6 +246,15 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: "#fff",
     },
+    imagePreview: {
+        width: "100%",
+        height: 150,
+        marginTop: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#ccc",
+    },
     input: {
         marginBottom: 10,
     },
@@ -182,9 +266,21 @@ const styles = StyleSheet.create({
     dropdown: {
         marginBottom: 10,
         borderColor: "#dcdcdc",
+        zIndex: 10,
     },
     dropdownContainer: {
         borderColor: "#dcdcdc",
+        zIndex: 9,
+    },
+
+    dropdown1: {
+        marginBottom: 10,
+        borderColor: "#dcdcdc",
+        zIndex: 8,
+    },
+    dropdownContainer1: {
+        borderColor: "#dcdcdc",
+        Index: 7,
     },
     submitButton: {
         backgroundColor: "#28a745",

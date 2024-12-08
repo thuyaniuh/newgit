@@ -7,7 +7,9 @@ import {
     PermissionsAndroid,
     Platform,
     TouchableOpacity,
-    Linking
+    Linking,
+    Image,
+    Text
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRE, deleteRE } from "../stores/actions/reAction";
@@ -118,11 +120,22 @@ export default function RevenueExpenditureScreen({ navigation }) {
                         {item.type_re == 0 ? "Phiếu thu" : "Phiếu chi"}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
+                        Loại tiền: 
+                        {item.type_re == 0 ? "Tiền mặt" : "Chuyển khoản"}
+                    </Paragraph>
+                    <Paragraph style={styles.projectInfo}>
                         Ngày tạo: {item.created_at}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
                         Mô tả: {item.note}
                     </Paragraph>
+                    {/* <Text style={styles.projectInfo}>
+                        { api_url + 'storage/'+ item?.images }
+                    </Text>
+                    <Text style={styles.projectInfo}>
+                    {item?.images ? (<Image source={{ uri: api_url + 'storage/'+ item?.images }} style={styles.imagePreview} />) : ""}
+                    </Text> */}
+
                 </View>
                 <View style={styles.actionContainer}>
                     {/* <IconButton icon="pencil" style={styles.iconButton} /> */}
@@ -244,6 +257,15 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginTop: 10,
+    },
+    imagePreview: {
+        width: "100%",
+        height: 150,
+        marginTop: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#ccc",
     },
     projectName: {
         fontSize: 18,

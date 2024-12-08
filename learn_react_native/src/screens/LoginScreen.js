@@ -7,7 +7,6 @@ import { login } from "../stores/actions/authActions";
 import Toast from "react-native-toast-message";
 
 export default function LoginScreen({ navigation }) {
-
     const [email, setEmail] = useState("admin@example.com");
 
     const [password, setPassword] = useState("123456");
@@ -16,22 +15,28 @@ export default function LoginScreen({ navigation }) {
 
     const handleLogin = async () => {
         const form_data = new FormData();
-        form_data.append('email', email);
-        form_data.append('password', password);
+        form_data.append("email", email);
+        form_data.append("password", password);
 
         try {
-            await dispatch(login(form_data));
-
-            Toast.show({
-                type: 'success',
-                text1: 'Login successful',
-            });
-            navigation.navigate('Home');
+            if (await dispatch(login(form_data))) {
+                Toast.show({
+                    type: "success",
+                    text1: "Login successful",
+                });
+                navigation.navigate("Home");
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Login failed",
+                    text2: "Invalid email or password or not active user",
+                });
+            }
         } catch (error) {
             Toast.show({
-                type: 'error',
-                text1: 'Login failed',
-                text2: 'Invalid email or password',
+                type: "error",
+                text1: "Login failed",
+                text2: "Invalid email or password or not active user",
             });
         }
     };
@@ -109,6 +114,6 @@ const styles = StyleSheet.create({
         color: "#F5C518",
     },
     text: {
-        color: 'black',
-    }
+        color: "black",
+    },
 });

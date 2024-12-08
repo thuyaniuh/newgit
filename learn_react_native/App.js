@@ -24,6 +24,7 @@ import SupplierManagementScreen from "./src/screens/SupplierManagementScreen";
 import AddMaterialScreen from "./src/screens/AddMaterialScreen";
 import MaterialScreen from "./src/screens/MaterialScreen";
 import ProjectManagementScreen from "./src/screens/ProjectManagementScreen";
+import AddPurchaseScreen from "./src/screens/AddPurchaseScreen";
 import AddProjectScreen from "./src/screens/AddProjectScreen";
 import TaskListScreen from "./src/screens/TaskListScreen";
 import AddTaskScreen from "./src/screens/AddTaskScreen";
@@ -34,6 +35,7 @@ import PurchaseDetailScreen from "./src/screens/PurchaseDetailScreen";
 import EntryScreen from "./src/screens/EntryScreen";
 import RevenueExpenditureScreen from "./src/screens/RevenueExpenditureScreen";
 import AddRevenueExpenditureScreen from "./src/screens/AddRevenueExpenditureScreen";
+import OtpScreen from "./src/screens/OtpScreen";
 import AddEntry from "./src/screens/AddEntry";
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -62,6 +64,7 @@ function AppStack() {
                     headerTintColor: "#333",
                 }}
             />
+
             <Stack.Screen
                 name="Home"
                 component={HomeScreen}
@@ -86,7 +89,7 @@ function AppStack() {
                     headerTintColor: "#333",
                 })}
             />
-            
+
             <Stack.Screen
                 name="todo"
                 component={ToDoScreen}
@@ -132,15 +135,16 @@ function AppStack() {
                     headerTintColor: "#333",
                 }}
             />
-            
+
             <Stack.Screen
                 name="ForgotPassword"
                 component={ForgotPasswordScreen}
                 options={{
                     title: "Forgot Password",
                     headerStyle: { backgroundColor: theme.colors.primary },
-                    headerTintColor: "#333"
-                }} />
+                    headerTintColor: "#333",
+                }}
+            />
             <Stack.Screen
                 name="SupplierManagement"
                 component={SupplierManagementScreen}
@@ -223,6 +227,15 @@ function AppStack() {
                 }}
             />
             <Stack.Screen
+                name="AddPurchaseScreen"
+                component={AddPurchaseScreen}
+                options={{
+                    title: "Add Purchase",
+                    headerStyle: { backgroundColor: theme.colors.primary },
+                    headerTintColor: "#333",
+                }}
+            />
+            <Stack.Screen
                 name="PurchaseDetailScreen"
                 component={PurchaseDetailScreen}
                 options={{
@@ -249,7 +262,7 @@ function AppStack() {
                     headerTintColor: "#333",
                 }}
             />
-            
+
             <Stack.Screen
                 name="RevenueExpenditureScreen"
                 component={RevenueExpenditureScreen}
@@ -264,6 +277,15 @@ function AppStack() {
                 component={AddRevenueExpenditureScreen}
                 options={{
                     title: "Add Revenue Expenditure",
+                    headerStyle: { backgroundColor: theme.colors.primary },
+                    headerTintColor: "#333",
+                }}
+            />
+            <Stack.Screen
+                name="OtpScreen"
+                component={OtpScreen}
+                options={{
+                    title: "Cofirm OTP",
                     headerStyle: { backgroundColor: theme.colors.primary },
                     headerTintColor: "#333",
                 }}

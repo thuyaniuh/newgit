@@ -10,6 +10,7 @@ export default function EditUserScreen({ route, navigation }) {
     const { user } = route.params;
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
+    const [phone, setPhone] = useState(user.phone);
     const [projects, setProject] = useState([]);
     const api_url = process.env.API_URL;
     const [typeOpen, setTypeOpen] = useState(false);
@@ -41,7 +42,7 @@ export default function EditUserScreen({ route, navigation }) {
 
     // Hàm lưu dữ liệu khi chỉnh sửa
     const handleSave = () => {
-        const updateUser = { name, email, type };
+        const updateUser = { name, email, phone, type };
         // console.log(updateUser)
         dispatch(editUser(user.user_id, updateUser));
         navigation.goBack();
@@ -59,6 +60,13 @@ export default function EditUserScreen({ route, navigation }) {
                 label="Email"
                 value={email}
                 onChangeText={setEmail}
+                style={styles.input}
+                mode="outlined"
+            />
+            <TextInput
+                label="Phone"
+                value={phone}
+                onChangeText={setPhone}
                 style={styles.input}
                 mode="outlined"
             />
