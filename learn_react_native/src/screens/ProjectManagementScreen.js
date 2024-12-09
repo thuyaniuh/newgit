@@ -90,6 +90,9 @@ function ProjectManagementScreen({ props, navigation }) {
                         Ngân sách: {item.budget}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
+                        Mô tả: {item.description}
+                    </Paragraph>
+                    <Paragraph style={styles.projectInfo}>
                         Trạng thái: {item.status}
                     </Paragraph>
                 </View>

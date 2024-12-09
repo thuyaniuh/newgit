@@ -43,10 +43,27 @@ export const add_projects = (data) => async (dispatch) => {
             type: ADD_PROJECT,
             payload: response.data,
         });
-        return true
+        return true;
     } catch (error) {
         console.log("Lỗi khi thêm dự án:", error);
-        return false
+        return false;
+    }
+};
+
+export const edit_projects = (data) => async (dispatch) => {
+    try {
+        const token = await AsyncStorage.getItem("token");
+        const response = await api.post("api/projects/update2", data, {
+            headers: {
+                // "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return true;
+    } catch (error) {
+        console.log("Lỗi khi sửa dự án:", error);
+        return false;
     }
 };
 

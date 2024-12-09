@@ -8,11 +8,11 @@ export const EDIT_USER = "EDIT_USER";
 export const DELETE_USER = "DELETE_USER";
 
 // Fetch RE with pagination and search
-export const fetchRE = (page = 1, search = "") => async (dispatch) => {
+export const fetchRE = (page = 1, search = "", end = "") => async (dispatch) => {
     try {
         const token = await AsyncStorage.getItem("token");
         // console.log("aaaa", token);
-        const response = await api.get(`api/revenue_expenditure?page=${page}&search=${search}`, {
+        const response = await api.get(`api/revenue_expenditure?page=${page}&search=${search}&end=${end}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,

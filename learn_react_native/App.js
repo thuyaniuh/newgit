@@ -35,6 +35,7 @@ import PurchaseDetailScreen from "./src/screens/PurchaseDetailScreen";
 import EntryScreen from "./src/screens/EntryScreen";
 import RevenueExpenditureScreen from "./src/screens/RevenueExpenditureScreen";
 import AddRevenueExpenditureScreen from "./src/screens/AddRevenueExpenditureScreen";
+import EditProjectScreen from "./src/screens/EditProjectScreen"
 import OtpScreen from "./src/screens/OtpScreen";
 import AddEntry from "./src/screens/AddEntry";
 const Stack = createStackNavigator();
@@ -286,6 +287,15 @@ function AppStack() {
                 component={OtpScreen}
                 options={{
                     title: "Cofirm OTP",
+                    headerStyle: { backgroundColor: theme.colors.primary },
+                    headerTintColor: "#333",
+                }}
+            />
+            <Stack.Screen
+                name="EditProjectScreen"
+                component={EditProjectScreen}
+                options={{
+                    title: "Edit project",
                     headerStyle: { backgroundColor: theme.colors.primary },
                     headerTintColor: "#333",
                 }}

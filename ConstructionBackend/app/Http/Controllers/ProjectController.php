@@ -91,16 +91,36 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         //
         $project = Project::findOrFail($id);
 
         $validated = $request->validate([
+            'name' => 'required',
             'type' => 'sometimes|required|in:"Xây dựng","Thiết kế"',
             'description' => 'sometimes|required|string|max:500',
             'start_day' => 'sometimes|required|date',
             'end_day' => 'sometimes|required|date',
+            'status' => 'required|in:active,completed',
+        ]);
+
+        $project->update($validated);
+
+        return response()->json($project, 200);
+    }
+
+    public function update2(Request $request)
+    {
+        //
+        $project = Project::findOrFail($request->project_id);
+
+        $validated = $request->validate([
+            'name' => 'required',
+            'type' => 'sometimes|required|in:"Xây dựng","Thiết kế"',
+            'description' => 'sometimes|required|string|max:500',
+            // 'start_day' => 'sometimes|required|date',
+            // 'end_day' => 'sometimes|required|date',
             'status' => 'required|in:active,completed',
         ]);
 

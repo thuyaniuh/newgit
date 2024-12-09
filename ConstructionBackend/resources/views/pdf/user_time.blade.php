@@ -31,46 +31,46 @@
 
 <body style="font-family: DejaVu Sans, sans-serif;">
     <div>
-        <h1>Báo cáo thu chi</h1>
+        <h1>Chấm công</h1>
     </div>
     <div>
-        <b>Ngày xuất báo cáo: {{ $start }} -> {{ $end }}</b>
+        <b>Ngày xuất: {{ $start }}</b>
     </div>
     <div>
+        <b>Họ tên: {{ $user->name }}</b>
+    </div>
+    <div>
+        <b>Email: {{ $user->email }}</b>
+    </div>
+    <div style="margin-top: 20px;">
         <table>
             <tr>
-                <th>ID</th>
+                <th>Dự án</th>
                 <th>Sô tiên</th>
-                <th>Phương thức</th>
-                <th>Loại phiếu</th>
-                <th>Nội dung</th>
-                <th>User</th>
+                <th>Trạng thái</th>
                 <th>Ngày</th>
             </tr>
             @foreach ($data as $value)
                 <tr>
-                    <td>{{ $value['id'] }}</td>
+                    <td>{{ $value['name'] }}</td>
                     <td>{{ $value['money'] }}</td>
                     <td>
-                        @if ($value['type_trans'] == 0)
-                            {{ 'Tiền mặt' }}
+                        @if ($value['status'] == 1)
+                            {{ 'Có mặt' }}
+                        @elseif ($value['status'] == 2)
+                            {{ 'Trễ' }}
                         @else
-                            {{ 'Chuyển khoản' }}
+                            {{ 'Nghỉ' }}
                         @endif
                     </td>
-                    <td>
-                        @if ($value['type_re'] == 0)
-                            {{ 'Phiếu thu' }}
-                        @else
-                            {{ 'Phiếu chi' }}
-                        @endif
-                    </td>
-                    <th>{{ $value['note'] }}</th>
-                    <td>{{ $value['user']['name'] ?? 'User' }}</td>
                     <td>{{ date('d/m/y', strtotime($value['created_at'])) }}</td>
                 </tr>
             @endforeach
         </table>
+    </div>
+
+    <div style="padding-left: 70%; margin-top: 40px;">
+        Ký tên xác nhận
     </div>
 </body>
 

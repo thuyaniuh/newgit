@@ -13,7 +13,7 @@ export const fetchTasks = (projectId) => async (dispatch) => {
             }
         );
         dispatch({
-            type: 'FETCH_TASKS',
+            type: "FETCH_TASKS",
             payload: response.data,
         });
     } catch (error) {
@@ -26,7 +26,7 @@ export const add_task = (data) => async (dispatch) => {
         if (!token) {
             return false;
         }
-        console.log(data)
+        console.log(data);
         const response = await api.post("api/tasks/store", data, {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + token,
@@ -37,7 +37,16 @@ export const add_task = (data) => async (dispatch) => {
 };
 
 export const updateTask = (taskId, updatedData) => async (dispatch) => {
-    // Update a specific task
+    try {
+        const token = await AsyncStorage.getItem("token");
+
+        const response = await api.post("api/tasks/update2", updatedData, {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + token,
+        });
+    } catch (error) {
+        console.log(error);
+    }
 };
 export const deleteTask = (taskId) => async (dispatch) => {
     // Delete a specific task

@@ -23,6 +23,7 @@ Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
 Route::get('/users/times/{id}', [UserController::class, 'times']);
 Route::post('/users/time', [UserController::class, 'time']);
+Route::post('/users/export', [UserController::class, 'export']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/users/update/{id}', [UserController::class, 'update']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
@@ -34,6 +35,7 @@ Route::get('/projects_all', [ProjectController::class, 'all']);
 Route::post('/projects/store', [ProjectController::class, 'store']);
 Route::get('/projects/{id}', [ProjectController::class, 'show']);
 Route::put('/projects/update/{id}', [ProjectController::class, 'update']);
+Route::post('/projects/update2', [ProjectController::class, 'update2']);
 Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
 
 Route::get('/entry_by_user', [EntryController::class, 'getByUser']);
@@ -71,6 +73,7 @@ Route::get('tasks/projects/{id}', [TaskController::class, 'index1']);
 Route::post('/tasks/store', [TaskController::class, 'store']);
 Route::get('/tasks/{id}', [TaskController::class, 'show']);
 Route::put('tasks/update/{id}', [TaskController::class, 'update']);
+Route::post('tasks/update2', [TaskController::class, 'update2']);
 Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
 
 Route::get('/counts', [DashboardController::class, 'getCounts']);

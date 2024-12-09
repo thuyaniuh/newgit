@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     Linking,
     Image,
-    Text
+    Text,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRE, deleteRE } from "../stores/actions/reAction";
@@ -34,10 +34,18 @@ export default function RevenueExpenditureScreen({ navigation }) {
     const { revenue_expenditure, totalPages, currentPage } = useSelector(
         (state) => state.revenue_expenditure
     );
-    const [startDay, setStartDay] = useState(new Date());
+    const [startDay, setStartDay] = useState(new Date("2024-12-01"));
+    const [endday, setEndDay] = useState(new Date());
     const [showStartPicker, setShowStartPicker] = useState(false);
+    const [showEndDayPicker, setShowEndDayPicker] = useState(false);
     useEffect(() => {
-        dispatch(fetchRE(currentPage, search));
+        dispatch(
+            fetchRE(
+                currentPage,
+                startDay.toISOString().split("T")[0],
+                endday.toISOString().split("T")[0]
+            )
+        );
     }, [dispatch, currentPage, search]);
 
     // useEffect(() => {
@@ -58,7 +66,11 @@ export default function RevenueExpenditureScreen({ navigation }) {
     async function callDelete(id) {
         await dispatch(deleteRE(id));
         await dispatch(
-            fetchRE(currentPage, startDay.toISOString().split("T")[0])
+            fetchRE(
+                currentPage,
+                startDay.toISOString().split("T")[0],
+                endday.toISOString().split("T")[0]
+            )
         );
     }
 
@@ -66,6 +78,7 @@ export default function RevenueExpenditureScreen({ navigation }) {
         try {
             let formData = new FormData();
             formData.append("search", startDay.toISOString().split("T")[0]);
+            formData.append("end", endday.toISOString().split("T")[0]);
             // formData.append("user_id", user?.user_id);
 
             const axiosInstance = await axios.create({
@@ -82,11 +95,11 @@ export default function RevenueExpenditureScreen({ navigation }) {
             );
 
             const url = data?.data?.file_path;
-            
+
             const fileUri = `${FileSystem.documentDirectory}sample.pdf`;
 
             try {
-                console.log(url)
+                console.log(url);
                 // const { uri } = await FileSystem.downloadAsync(url, fileUri);
                 // Alert.alert(`File saved to: ${uri} or open ${url} to download`);
                 await Linking.openURL(url);
@@ -120,7 +133,7 @@ export default function RevenueExpenditureScreen({ navigation }) {
                         {item.type_re == 0 ? "Phiếu thu" : "Phiếu chi"}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
-                        Loại tiền: 
+                        Loại tiền:
                         {item.type_re == 0 ? "Tiền mặt" : "Chuyển khoản"}
                     </Paragraph>
                     <Paragraph style={styles.projectInfo}>
@@ -135,7 +148,6 @@ export default function RevenueExpenditureScreen({ navigation }) {
                     <Text style={styles.projectInfo}>
                     {item?.images ? (<Image source={{ uri: api_url + 'storage/'+ item?.images }} style={styles.imagePreview} />) : ""}
                     </Text> */}
-
                 </View>
                 <View style={styles.actionContainer}>
                     {/* <IconButton icon="pencil" style={styles.iconButton} /> */}
@@ -152,12 +164,12 @@ export default function RevenueExpenditureScreen({ navigation }) {
 
     const handleDateChange = (event, selectedDate, type) => {
         const currentDate =
-            selectedDate || (type === "start" ? startDay : endDay);
+            selectedDate || (type === "start" ? startDay : endday);
         if (type === "start") {
             setShowStartPicker(false);
             setStartDay(currentDate);
         } else {
-            setShowEndPicker(false);
+            setShowEndDayPicker(false);
             setEndDay(currentDate);
         }
     };
@@ -180,8 +192,31 @@ export default function RevenueExpenditureScreen({ navigation }) {
                 />
             )}
             <Button
+                mode="outlined"
+                onPress={() => setShowEndDayPicker(true)}
+                style={styles.dateButton}
+            >
+                Select End Date: {endday.toISOString().split("T")[0]}
+            </Button>
+            {showEndDayPicker && (
+                <DateTimePicker
+                    value={endday}
+                    mode="date"
+                    display="default"
+                    onChange={(e, date) => handleDateChange(e, date, "end")}
+                />
+            )}
+            <Button
                 mode="contained"
-                onPress={() => dispatch(fetchRE(1, startDay.toISOString().split("T")[0]))}
+                onPress={() =>
+                    dispatch(
+                        fetchRE(
+                            1,
+                            startDay.toISOString().split("T")[0],
+                            endday.toISOString().split("T")[0]
+                        )
+                    )
+                }
                 style={styles.searchButton}
             >
                 Tìm kiếm
@@ -233,6 +268,9 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: "#f8f8f8",
+    },
+    dateButton: {
+        marginTop: 20,
     },
     searchInput: {
         marginBottom: 10,

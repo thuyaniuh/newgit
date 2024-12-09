@@ -21,7 +21,8 @@ class RevenueExpenditureController extends Controller
     {
         try {
             $date = Carbon::parse($request->search)->format('Y-m-d');
-            $data = RevenueExpenditure::with('user')->whereDate('created_at', $date)->latest('id')->get();
+            $end = Carbon::parse($request->end)->format('Y-m-d');
+            $data = RevenueExpenditure::with('user')->whereDate('created_at', ">=", $date)->whereDate('created_at', "<=", $end)->latest('id')->get();
 
             return response()->json($data, 200);
         } catch (Exception $e) {
@@ -36,18 +37,26 @@ class RevenueExpenditureController extends Controller
             Log::info($request->all());
 
             $date = Carbon::parse($request->search)->format('Y-m-d');
-            $data = RevenueExpenditure::with('user')->whereDate('created_at', $date)->latest('id')->get()->toArray();
+            $end = Carbon::parse($request->end)->format('Y-m-d');
 
-            $pdf = Pdf::loadView('pdf.RevenueExpenditure', ["data" => $data]);
+            $data = RevenueExpenditure::with('user')->whereDate('created_at', ">=", $date)->whereDate('created_at', "<=", $end)->latest('id')->get()->toArray();
+            // Log::info($data);
+            $pdf = Pdf::loadView('pdf.RevenueExpenditure', [
+                "data" => $data,
+                'start' => Carbon::parse($request->search)->format('d-m-Y'),
+                'end' => Carbon::parse($request->end)->format('d-m-Y'),
+            ]);
 
             $filePath = 'pdfs/report_' . time() . '.pdf';
-            Log::info($data);
+            // Log::info($data);
             // Lưu file vào storage
             Storage::put('public/' . $filePath, $pdf->output());
 
             // Trả về đường dẫn đầy đủ
             return response()->json([
-                'file_path' => asset('storage/' . $filePath)
+                'file_path' => asset('storage/' . $filePath),
+                'start' => Carbon::parse($request->search)->format('d-m-Y'),
+                'end' => Carbon::parse($request->end)->format('d-m-Y'),
             ], 200);
         } catch (Exception $e) {
             Log::info($e);

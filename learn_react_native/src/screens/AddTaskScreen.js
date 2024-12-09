@@ -110,8 +110,8 @@ function AddTaskScreen({ route, navigation }) {
                         setOpen={setUserOpen}
                         setValue={setUserId}
                         placeholder="Assign User"
-                        style={styles.dropdown}
-                        dropDownContainerStyle={styles.dropdownContainer}
+                        style={styles.dropdown1}
+                        dropDownContainerStyle={styles.dropdownContainer1}
                     />
                     {/* <TextInput
                         label="Start Date"
@@ -196,12 +196,23 @@ const styles = StyleSheet.create({
     input: {
         marginBottom: 10,
     },
+    dropdown1: {
+        marginBottom: 10,
+        borderColor: "#dcdcdc",
+        zIndex: 10,
+    },
+    dropdownContainer1: {
+        borderColor: "#dcdcdc",
+        zIndex: 9,
+    },
     dropdown: {
         marginBottom: 10,
         borderColor: "#dcdcdc",
+        zIndex: 8,
     },
     dropdownContainer: {
         borderColor: "#dcdcdc",
+        zIndex: 7,
     },
     submitButton: {
         backgroundColor: "#28a745",

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Project;
 use App\Models\Purchase;
+use Illuminate\Http\Request;
+use App\Models\RevenueExpenditure;
 use Illuminate\Support\Facades\DB;
 
 class PurchaseController extends Controller
@@ -71,6 +73,18 @@ class PurchaseController extends Controller
                     $purchase->images()->create(['image_path' => $path]);
                 }
             }
+
+            $project = Project::where('project_id', $validated['project_id'])->first();
+
+            $data = [
+                'user_id' => $validated['user_id'],
+                'type_re' => 1,
+                'note' => "Chi mua vật tư " . (!empty($project) ? $project->name : $validated['project_id']),
+                'money' => $totalPrice,
+                'type_trans' => 0,
+            ];
+
+            $data = RevenueExpenditure::create($data);
 
             DB::commit();
             return response()->json($purchase->load('materials', 'images'), 201);

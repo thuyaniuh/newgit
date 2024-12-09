@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, StyleSheet, Alert } from "react-native";
+import { View, FlatList, StyleSheet, Alert, Linking } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
     fetchTasks,
@@ -16,8 +16,12 @@ import {
     Paragraph,
 } from "react-native-paper";
 import { fetchUsersTime } from "../stores/actions/userActions";
+import axios from "axios";
+import Toast from "react-native-toast-message";
+import * as FileSystem from "expo-file-system";
 
 function EntryScreen({ route, navigation }) {
+    const api_url = process.env.API_URL;
     const { users } = route.params;
     const project = route.params.item;
     const dispatch = useDispatch();
@@ -59,6 +63,46 @@ function EntryScreen({ route, navigation }) {
         setModalVisible(false);
     };
 
+    const downloadPDF = async () => {
+        try {
+            let formData = new FormData();
+            formData.append("user_id", users.user_id);
+
+            const axiosInstance = await axios.create({
+                baseURL: api_url,
+                timeout: 60000, // 60 giây
+            });
+            console.log(api_url + "api/users/export");
+            const data = await axiosInstance.post(
+                "api/users/export",
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
+
+            const url = data?.data?.file_path;
+
+            const fileUri = `${FileSystem.documentDirectory}sample.pdf`;
+
+            try {
+                console.log(url);
+                // const { uri } = await FileSystem.downloadAsync(url, fileUri);
+                // Alert.alert(`File saved to: ${uri} or open ${url} to download`);
+                await Linking.openURL(url);
+            } catch (error) {
+                console.error(error);
+                Alert.alert("Failed to download file.");
+            }
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Lỗi download",
+                text2: error.message,
+            });
+        }
+    };
+
     const renderTask = ({ item }) => (
         <Card style={styles.card}>
             <Card.Content>
@@ -98,6 +142,14 @@ function EntryScreen({ route, navigation }) {
                 </Button>
             )}
 
+            <Button
+                mode="contained"
+                onPress={() => downloadPDF()}
+                style={styles.exportButton}
+            >
+                Xuất file
+            </Button>
+
             <Title>Tổng tiền công tháng này: {users_time?.money}</Title>
 
             <FlatList
@@ -133,6 +185,10 @@ const styles = StyleSheet.create({
     modalContent: { padding: 20, backgroundColor: "white" },
     font_btitle: {
         fontWeight: "bold",
+    },
+    exportButton: {
+        marginTop: 0,
+        backgroundColor: "green",
     },
 });
 

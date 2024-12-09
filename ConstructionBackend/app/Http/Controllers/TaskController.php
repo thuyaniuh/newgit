@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Carbon\Carbon;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
@@ -14,7 +16,7 @@ class TaskController extends Controller
     public function index($id)
     {
         //
-        $tasks = Task::where("project_id", $id)->with(['project', 'user'])->get();
+        $tasks = Task::where("project_id", $id)->with(['project', 'user'])->latest('id')->get();
         return response()->json($tasks, 200);
     }
 
@@ -81,6 +83,34 @@ class TaskController extends Controller
         $task->update($validated);
 
         return response()->json($task, 200);
+    }
+
+    public function update2(Request $request)
+    {
+        //
+        try {
+            Log::info($request->all());
+            $task = Task::where('task_id', $request->task_id)->first();
+
+            $validated = $request->validate([
+                'name' => 'sometimes|required|string|max:255',
+                // 'project_id' => 'sometimes|required|exists:projects,id',
+                // 'user_id' => 'sometimes|required|exists:users,id',
+                // 'start_day' => 'sometimes|required|date',
+                // 'end_day' => 'sometimes|required|date',
+                // 'status' => 'required|int',
+            ]);
+
+            $task->update([
+                "name" => $request->name,
+                "status" => $request->status,
+            ]);
+
+            return response()->json($task, 200);
+        } catch (Exception $e) {
+            Log::info($e);
+            return response()->json($e->getMessage(), 500);
+        }
     }
 
     /**

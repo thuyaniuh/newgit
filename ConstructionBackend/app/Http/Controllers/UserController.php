@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
-use App\Models\ProjectUser;
-use App\Models\Timekeeping;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Project;
+use App\Models\ProjectUser;
+use App\Models\Timekeeping;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -189,6 +190,41 @@ class UserController extends Controller
         return response()->json([
             "data" => $data,
             "money" => $money,
+        ], 200);
+    }
+
+    public function export(Request $request)
+    {
+        $data = Timekeeping::join('project_users', 'project_users.id', 'timekeepings.project_user_id')
+            ->join('projects', 'projects.project_id', 'project_users.project_id')
+            ->select(['timekeepings.*', 'project_users.user_id', 'projects.name'])
+            ->where('project_users.user_id', $request->user_id)
+            ->latest('timekeepings.id')
+            ->get();
+
+        $money = Timekeeping::join('project_users', 'project_users.id', 'timekeepings.project_user_id')
+            ->join('projects', 'projects.project_id', 'project_users.project_id')->whereMonth('timekeepings.created_at', Carbon::now()->month)
+            ->whereYear('timekeepings.created_at', Carbon::now()->year)
+            ->where('timekeepings.status', '!=', 3)
+            ->where('project_users.user_id', $request->user_id)
+            ->sum('timekeepings.money');
+
+        $user = User::where('user_id', $request->user_id)->first();
+
+        $pdf = Pdf::loadView('pdf.user_time', [
+            "data" => $data,
+            'start' => Carbon::now()->format('d-m-Y'),
+            'user' => $user,
+        ]);
+
+        $filePath = 'pdfs/report_' . time() . '.pdf';
+        // Log::info($data);
+        // Lưu file vào storage
+        Storage::put('public/' . $filePath, $pdf->output());
+
+        // Trả về đường dẫn đầy đủ
+        return response()->json([
+            'file_path' => asset('storage/' . $filePath),
         ], 200);
     }
 

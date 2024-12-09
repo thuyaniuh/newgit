@@ -15,6 +15,8 @@ import {
     Title,
     Paragraph,
 } from "react-native-paper";
+import Toast from "react-native-toast-message";
+import DropDownPicker from "react-native-dropdown-picker";
 
 function TaskListScreen({ route, navigation }) {
     const { projectId } = route.params;
@@ -24,7 +26,9 @@ function TaskListScreen({ route, navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [currentTask, setCurrentTask] = useState({});
     const [isEditing, setIsEditing] = useState(false);
-    // console.log(projectId);
+    const [statusOpen, setStatusOpen] = useState(false);
+    const [status, setStatus] = useState("");
+
     useEffect(() => {
         dispatch(fetchTasks(projectId));
     }, [dispatch, projectId]);
@@ -35,11 +39,18 @@ function TaskListScreen({ route, navigation }) {
         setModalVisible(true);
     };
 
-    const handleEditTask = (task) => {
-        setIsEditing(true);
-        setCurrentTask(task);
-        setModalVisible(true);
+    const handleEditTask = async (task) => {
+        await setIsEditing(true);
+        await console.log(task.status);
+        await setCurrentTask(task);
+        await setStatus(task.status);
+        await setModalVisible(true);
     };
+
+    const taskStatuses = [
+        { label: "Active", value: "1" },
+        { label: "Completed", value: "2" },
+    ];
 
     const handleDeleteTask = (taskId) => {
         Alert.alert("Delete Task", "Are you sure?", [
@@ -48,13 +59,21 @@ function TaskListScreen({ route, navigation }) {
         ]);
     };
 
-    const handleSaveTask = () => {
+    const handleSaveTask = async () => {
         if (isEditing) {
-            dispatch(updateTask(currentTask.id, currentTask));
+            await dispatch(
+                updateTask(currentTask.id, { ...currentTask, status })
+            );
+            await dispatch(fetchTasks(projectId));
+
+            Toast.show({
+                type: "success",
+                text1: "Task added successfully",
+            });
         } else {
-            dispatch(addTask(projectId, currentTask));
+            await dispatch(addTask(projectId, currentTask));
         }
-        setModalVisible(false);
+        await setModalVisible(false);
     };
 
     const renderTask = ({ item }) => (
@@ -63,7 +82,10 @@ function TaskListScreen({ route, navigation }) {
                 <Title>{item.name}</Title>
                 <Paragraph>Project: {item.project.name}</Paragraph>
                 <Paragraph>User: {item.user?.name}</Paragraph>
-                <Paragraph>User: {item.user?.email}</Paragraph>
+                <Paragraph>Email: {item.user?.email}</Paragraph>
+                <Paragraph>
+                    Trang thái: {item.status == 1 ? "Active" : "Completed"}
+                </Paragraph>
                 <Paragraph>Start date: {item?.start_day}</Paragraph>
                 <Paragraph>End date: {item?.end_day}</Paragraph>
                 <Card.Actions style={styles.cardActions}>
@@ -90,7 +112,13 @@ function TaskListScreen({ route, navigation }) {
         <View style={styles.container}>
             <Button
                 mode="contained"
-                onPress={() => navigation.navigate("AddTask", { projectId: projectId, project: project, navigation: navigation })}
+                onPress={() =>
+                    navigation.navigate("AddTask", {
+                        projectId: projectId,
+                        project: project,
+                        navigation: navigation,
+                    })
+                }
                 style={styles.addButton}
             >
                 Add Task
@@ -112,6 +140,16 @@ function TaskListScreen({ route, navigation }) {
                             setCurrentTask({ ...currentTask, name: text })
                         }
                     />
+                    <DropDownPicker
+                        open={statusOpen}
+                        value={status}
+                        items={taskStatuses}
+                        setOpen={setStatusOpen}
+                        setValue={setStatus}
+                        placeholder="Select Status"
+                        style={styles.dropdown}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                    />
                     <Button onPress={handleSaveTask}>
                         {isEditing ? "Update Task" : "Save Task"}
                     </Button>
@@ -126,6 +164,16 @@ const styles = StyleSheet.create({
     card: { marginBottom: 10 },
     addButton: { marginBottom: 15 },
     modalContent: { padding: 20, backgroundColor: "white" },
+    dropdown: {
+        marginTop: 10,
+        marginBottom: 10,
+        borderColor: "#dcdcdc",
+        zIndex: 8,
+    },
+    dropdownContainer: {
+        borderColor: "#dcdcdc",
+        zIndex: 7,
+    },
 });
 
 export default TaskListScreen;
